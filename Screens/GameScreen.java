@@ -81,7 +81,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         cardSlots = new CardSlot[3][3];
         for (int i = 0; i < 3; i++) {
             for (int ii = 0; ii < 3; ii++) {
-                cardSlots[i][ii] = new CardSlot(CARDSLOT_PADDING * (i + 1) + CARDSLOT_WIDTH * i,
+                cardSlots[i][ii] = new CardSlot(i, ii, CARDSLOT_PADDING * (i + 1) + CARDSLOT_WIDTH * i,
                         CARDSLOT_PADDING * (ii + 1) + CARDSLOT_HEIGHT * ii,
                         CARDSLOT_WIDTH,
                         CARDSLOT_HEIGHT);
@@ -97,30 +97,28 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
     }
 
-    private Group screen;
-
     private void drawScene() {
         clear();
 //        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-        screen = new Group();
+        Group screen = new Group();
         for (CardSlot[] slots : cardSlots) {
-            for (CardSlot slot : slots) {
-                Group group = new Group();
-                group.setPosition(slot.x, slot.y);
-                group.setSize(slot.width, slot.height);
+            for (final CardSlot slot : slots) {
+//                Group group = new Group();
+//                group.setPosition(slot.x, slot.y);
+//                group.setSize(slot.width, slot.height);
 
                 Image imgSlot = uiFactory.drawImage(slot.getBackgroundTexture());
                 imgSlot.setFillParent(true);
-                group.addActor(imgSlot);
+                slot.addActor(imgSlot);
 
                 Image imgCard = uiFactory.drawImage(slot.getCard().getCardTexture());
                 imgCard.setFillParent(true);
-                group.addActor(imgCard);
+                slot.addActor(imgCard);
 
                 Table table = new Table();
                 table.setFillParent(true);
                 table.left().bottom().padLeft(10).padBottom(10);
-                group.addActor(table);
+                slot.addActor(table);
 
                 switch (slot.getCard().getCardType()) {
                     case PLAYER:
@@ -153,27 +151,18 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 imgCard.addListener(new InputListener() {
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-                        camera.unproject(touch);
-                        if (getPlayerCard().isAlive()) {
-                            for (int i = 0; i < 3; i++) {
-                                for (int ii = 0; ii < 3; ii++) {
-                                    if (cardSlots[i][ii].contains(touch.x, touch.y) && slotIsClickable(i, ii)) {
-                                        System.out.println("Move to: X: " + i + " Y: " + ii + " " + cardSlots[i][ii].getCard());
-                                        if (cardSlots[i][ii].getCard().use(getPlayerCard())) {
-                                            moveTo(i, ii);
-                                            drawScene();
-
-                                        }
-                                    }
-                                }
+                        if (slot.isClickable(playerPositionX, playerPositionY)) {
+                            System.out.println("Move to: X: " + slot.getSlotPositionX() + " Y: " + slot.getSlotPositionY() + " " + slot.getCard());
+                            if (slot.getCard().use(getPlayerCard())) {
+                                moveTo(slot.getSlotPositionX(), slot.getSlotPositionY());
+                                drawScene();
                             }
                         }
                         return false;
                     }
                 });
 
-                screen.addActor(group);
+                screen.addActor(slot);
             }
         }
         addActor(screen);

@@ -2,26 +2,42 @@ package com.pregiel.cardgame;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.pregiel.cardgame.CardClasses.Card;
+
+import javax.swing.GroupLayout;
 
 
 /**
  * Created by Pregiel on 17.05.2018.
  */
 
-public class CardSlot extends Rectangle{
+public class CardSlot extends Group{
 
     private Card card;
     private Texture backgroundTexture;
 
+    private int slotPositionX, slotPositionY;
 
-    public CardSlot(int x, int y, int width, int height) {
+
+
+
+
+    public CardSlot(int slotPositionX, int slotPositionY, int x, int y, int width, int height) {
 //        backgroundTexture = new Texture(com.pregiel.cardgame.Screens.GameScreen.BACKGROUNDTEXTURE_PATH);
+        super();
+        this.slotPositionX = slotPositionX;
+        this.slotPositionY = slotPositionY;
+        setPosition(x, y);
+        setSize(width, height);
+    }
 
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    public int getSlotPositionX() {
+        return slotPositionX;
+    }
+
+    public int getSlotPositionY() {
+        return slotPositionY;
     }
 
     public Card getCard() {
@@ -38,5 +54,12 @@ public class CardSlot extends Rectangle{
 
     public void setBackgroundTexture(Texture backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
+    }
+
+    public boolean isClickable(int playerX, int playerY) {
+        return (playerX + 1 == slotPositionX && playerY == slotPositionY) ||
+                (playerX - 1 == slotPositionX && playerY == slotPositionY) ||
+                (playerX == slotPositionX && playerY + 1 == slotPositionY) ||
+                (playerX == slotPositionX && playerY - 1 == slotPositionY);
     }
 }

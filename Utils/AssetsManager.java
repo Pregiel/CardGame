@@ -11,12 +11,12 @@ import com.pregiel.cardgame.CardType;
 public class AssetsManager extends AssetManager{
 //    private AssetManager assetManager;
 
-    public static final String BACKGROUNDTEXTURE_PATH = "cardBackground.jpg";
-    public static final String DEFAULTCARD_PATH = "defaultCard.png";
-    public static final String PLAYERCARD_PATH = "playerCard.png";
-    public static final String GOLDCARD_PATH = "goldCard.png";
-    public static final String MONSTERCARD_PATH = "monsterCard.png";
-    public static final String WEAPONCARD_PATH = "weaponCard.png";
+    private static final String BACKGROUNDTEXTURE_PATH = "cardBackground.jpg";
+    private static final String DEFAULTCARD_PATH = "defaultCard.png";
+    private static final String PLAYERCARD_PATH = "playerCard.png";
+    private static final String GOLDCARD_PATH = "goldCard.png";
+    private static final String MONSTERCARD_PATH = "monsterCard.png";
+    private static final String WEAPONCARD_PATH = "weaponCard.png";
 
 
     public AssetsManager() {
