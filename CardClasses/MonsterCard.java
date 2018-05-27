@@ -2,21 +2,18 @@ package com.pregiel.cardgame.CardClasses;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
-import com.pregiel.cardgame.MyGdxGame;
+import com.pregiel.cardgame.Screens.GameScreen;
 
 /**
  * Created by Pregiel on 17.05.2018.
  */
 
 public class MonsterCard extends Card {
-    public MonsterCard() {
-        super();
-        setCardTexture(new Texture(MyGdxGame.MONSTERCARD_PATH));
-        setCardType(CardType.MONSTER);
-    }
 
     public MonsterCard(int maxPower) {
-        this();
+        super();
+//        setCardTexture(new Texture(GameScreen.MONSTERCARD_PATH));
+        setCardType(CardType.MONSTER);
         randomizePower(maxPower);
     }
 

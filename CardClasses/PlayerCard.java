@@ -2,7 +2,9 @@ package com.pregiel.cardgame.CardClasses;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
-import com.pregiel.cardgame.MyGdxGame;
+import com.pregiel.cardgame.Screens.GameScreen;
+import com.pregiel.cardgame.Utils.ScreenEnum;
+import com.pregiel.cardgame.Utils.ScreenManager;
 
 /**
  * Created by Pregiel on 17.05.2018.
@@ -15,7 +17,7 @@ public class PlayerCard extends Card {
     public PlayerCard() {
         super();
         gold = 0;
-        setCardTexture(new Texture(MyGdxGame.PLAYERCARD_PATH));
+//        setCardTexture(new Texture(GameScreen.PLAYERCARD_PATH));
         setCardType(CardType.PLAYER);
     }
 
@@ -35,6 +37,9 @@ public class PlayerCard extends Card {
 
     public void addHealth(int value) {
         health = health + value;
+        if (health <= 0) {
+            ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME);
+        }
     }
 
     public boolean isAlive() {
@@ -60,6 +65,8 @@ public class PlayerCard extends Card {
                 ", health=" + health +
                 '}';
     }
+
+
 
 
 }

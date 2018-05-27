@@ -2,7 +2,7 @@ package com.pregiel.cardgame.CardClasses;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
-import com.pregiel.cardgame.MyGdxGame;
+import com.pregiel.cardgame.Screens.GameScreen;
 
 /**
  * Created by Pregiel on 17.05.2018.
@@ -11,7 +11,7 @@ import com.pregiel.cardgame.MyGdxGame;
 public class GoldCard extends Card {
     public GoldCard() {
         super();
-        setCardTexture(new Texture(MyGdxGame.GOLDCARD_PATH));
+//        setCardTexture(new Texture(GameScreen.GOLDCARD_PATH));
         setCardType(CardType.GOLD);
     }
 
