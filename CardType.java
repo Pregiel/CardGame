@@ -1,5 +1,7 @@
 package com.pregiel.cardgame;
 
+import com.pregiel.cardgame.CardClasses.Card;
+
 import java.util.Random;
 
 /**
@@ -11,11 +13,17 @@ public enum CardType {
 
     private static final int size = values().length - 1;
 
-    public static CardType getRandomCardType() {
+    public static CardType getRandomCardType(CardType... excludeCardTypes) {
         Random r = new Random();
         int value = r.nextInt(size-1) + 1;
-
-        return getCardType(value);
+        CardType randomCardType = getCardType(value);
+        for (CardType type: excludeCardTypes) {
+            if (type == randomCardType) {
+                randomCardType = getRandomCardType(excludeCardTypes);
+                break;
+            }
+        }
+        return randomCardType;
     }
 
     public static CardType getCardType(int value) {

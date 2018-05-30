@@ -183,7 +183,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                         moveToSequence(slot.getSlotPositionX(), slot.getSlotPositionY());
                                     } else {
                                         if (slot.getCard().getCardType() == CardType.CHEST) {
-                                            changeCardSequence(slot, randomCard());
+                                            changeCardSequence(slot, randomCard(CardType.MONSTER, CardType.CHEST));
                                         }
                                         if (slot.getCard().getCardType() == CardType.MONSTER) {
                                             getPlayerCardSlot().redraw();
@@ -435,8 +435,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         }
     }
 
-    private Card randomCard() {
-        CardType type = CardType.getRandomCardType();
+    private Card randomCard(CardType... excludeCardTypes) {
+        CardType type = CardType.getRandomCardType(excludeCardTypes);
         Card card;
         switch (type) {
 //            case GOLD:
@@ -462,6 +462,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
             default:
                 card = new GoldCard(GOLD_MAX_POWER);
         }
+
         card.setCardTexture(assetsManager);
         return card;
     }
