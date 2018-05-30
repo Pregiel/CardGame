@@ -14,6 +14,7 @@ public class PlayerCard extends Card {
     private int health;
     private int gold;
 
+
     public PlayerCard() {
         super();
         gold = 0;

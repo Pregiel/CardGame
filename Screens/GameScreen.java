@@ -1,6 +1,7 @@
 package com.pregiel.cardgame.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
 import com.pregiel.cardgame.CardClasses.GoldCard;
 import com.pregiel.cardgame.CardClasses.MonsterCard;
@@ -15,9 +17,14 @@ import com.pregiel.cardgame.CardClasses.PlayerCard;
 import com.pregiel.cardgame.CardClasses.WeaponCard;
 import com.pregiel.cardgame.CardSlot;
 import com.pregiel.cardgame.CardType;
+import com.pregiel.cardgame.Direction;
+import com.pregiel.cardgame.PlayerCardSlot;
 import com.pregiel.cardgame.Utils.AssetsManager;
 import com.pregiel.cardgame.Utils.ScreenManager;
 import com.pregiel.cardgame.Utils.UIFactory;
+import com.pregiel.cardgame.Utils.Vector2;
+
+import java.text.RuleBasedCollator;
 
 
 /**
@@ -25,11 +32,13 @@ import com.pregiel.cardgame.Utils.UIFactory;
  */
 
 public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
-    private static final double CARDSLOT_WIDTH_RATIO = 0.3;
-    private static final double CARDSLOT_HEIGHT_RATIO = 0.3;
-    private static final double CARDSLOT_PADDING_RATIO = 0.025;
+    private static double CARDSLOT_WIDTH_RATIO;
+    private static double CARDSLOT_HEIGHT_RATIO;
+    private static double CARDSLOT_PADDING_RATIO;
 
-    private int CARD_PADDING;
+    public static int CARD_PADDING;
+    public static int CARDSLOT_WIDTH;
+    public static int CARDSLOT_HEIGHT;
 
 
     private static final int PLAYER_DEFAULT_HEALTH = 10;
@@ -39,9 +48,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private static final int GOLD_MAX_POWER = 10;
     private static final int WEAPON_MAX_POWER = 12;
 
+    private static final int GAME_SIZE = 3;
+
+    private boolean isAnimating = false;
+
     private int playerPositionX, playerPositionY;
 
-//    private SpriteBatch batch;
+    //    private SpriteBatch batch;
 //    private BitmapFont font;
     private OrthographicCamera camera;
     private CardSlot[][] cardSlots;
@@ -63,8 +76,12 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         int SCREEN_WIDTH = ScreenManager.SCREEN_WIDTH;
         int SCREEN_HEIGHT = ScreenManager.SCREEN_HEIGHT;
 
-        int CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
-        int CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
+        CARDSLOT_PADDING_RATIO = 0.025;
+        CARDSLOT_WIDTH_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
+        CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
+
+        CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
+        CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
         int CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
 
 
@@ -78,15 +95,25 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-        cardSlots = new CardSlot[3][3];
-        for (int i = 0; i < 3; i++) {
-            for (int ii = 0; ii < 3; ii++) {
-                cardSlots[i][ii] = new CardSlot(i, ii, CARDSLOT_PADDING * (i + 1) + CARDSLOT_WIDTH * i,
-                        CARDSLOT_PADDING * (ii + 1) + CARDSLOT_HEIGHT * ii,
-                        CARDSLOT_WIDTH,
-                        CARDSLOT_HEIGHT);
+        cardSlots = new CardSlot[GAME_SIZE][GAME_SIZE];
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int ii = 0; ii < GAME_SIZE; ii++) {
+                if (i == 1 && ii == 1) {
+                    cardSlots[i][ii] = new PlayerCardSlot(i, ii, CARDSLOT_PADDING * (i + 1) + CARDSLOT_WIDTH * i,
+                            CARDSLOT_PADDING * (ii + 1) + CARDSLOT_HEIGHT * ii,
+                            CARDSLOT_WIDTH,
+                            CARDSLOT_HEIGHT);
+                } else {
+                    cardSlots[i][ii] = new CardSlot(i, ii, CARDSLOT_PADDING * (i + 1) + CARDSLOT_WIDTH * i,
+                            CARDSLOT_PADDING * (ii + 1) + CARDSLOT_HEIGHT * ii,
+                            CARDSLOT_WIDTH,
+                            CARDSLOT_HEIGHT);
+                }
+
 
                 cardSlots[i][ii].setBackgroundTexture(assetsManager.getBackgroundTexture());
+                cardSlots[i][ii].setScale(0);
+                cardSlots[i][ii].animate(CardSlot.Animation.CREATE);
             }
         }
 
@@ -111,9 +138,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 imgSlot.setFillParent(true);
                 slot.addActor(imgSlot);
 
-                Image imgCard = uiFactory.drawImage(slot.getCard().getCardTexture());
-                imgCard.setFillParent(true);
-                slot.addActor(imgCard);
+                slot.setImgCard(uiFactory.drawImage(slot.getCard().getCardTexture()));
+                slot.getImgCard().setFillParent(true);
+//                slot.addActor(imgCard);
 
                 Table table = new Table();
                 table.setFillParent(true);
@@ -122,40 +149,51 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
                 switch (slot.getCard().getCardType()) {
                     case PLAYER:
+                        ((PlayerCardSlot) slot).setLblGold(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getGold())));
                         table.add(uiFactory.createCardDescLabel("Gold: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getGold())));
+                        table.add(((PlayerCardSlot) slot).getLblGold());
                         table.row();
+                        ((PlayerCardSlot) slot).setLblHealth(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())));
                         table.add(uiFactory.createCardDescLabel("Health: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())));
+                        table.add(((PlayerCardSlot) slot).getLblHealth());
                         table.row();
-                        table.add(uiFactory.createCardDescLabel("Power: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
                         break;
 
                     case GOLD:
-                        table.add(uiFactory.createCardDescLabel("Amount: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                        slot.setLblPowerName(uiFactory.createCardDescLabel("Amount: "));
                         break;
 
                     case WEAPON:
-                        table.add(uiFactory.createCardDescLabel("Power: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+//                        table.add(uiFactory.createCardDescLabel("Power: ")).left();
+//                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
                         break;
 
                     case MONSTER:
-                        table.add(uiFactory.createCardDescLabel("Power: ")).left();
-                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
                         break;
                 }
+                slot.setLblPower(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                table.add(slot.getLblPowerName()).left();
+                table.add(slot.getLblPower());
 
-                imgCard.addListener(new InputListener() {
+                slot.addListener(new InputListener() {
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        if (slot.isClickable(playerPositionX, playerPositionY)) {
-                            System.out.println("Move to: X: " + slot.getSlotPositionX() + " Y: " + slot.getSlotPositionY() + " " + slot.getCard());
-                            if (slot.getCard().use(getPlayerCard())) {
-                                moveTo(slot.getSlotPositionX(), slot.getSlotPositionY());
-                                drawScene();
+                        if (!isAnimating) {
+                            if (button == Input.Buttons.LEFT) {
+                                if (slot.isClickable(playerPositionX, playerPositionY)) {
+                                    System.out.println("Move to: X: " + slot.getSlotPositionX() + " Y: " + slot.getSlotPositionY() + " " + slot.getCard());
+                                    if (slot.getCard().use(getPlayerCard())) {
+//                                        slot.redraw();
+                                        cardSlots[playerPositionX][playerPositionY].redraw();
+                                        moveTo(slot.getSlotPositionX(), slot.getSlotPositionY());
+//                                drawScene();
+                                    }
+                                }
+                            } else {
+                                System.out.println(slot.getSlotPositionX() + " " + slot.getSlotPositionY() + " " + slot.getCard());
                             }
                         }
                         return false;
@@ -223,16 +261,135 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 //        }
 //    }
 
-    private void moveTo(int x, int y) {
-        cardSlots[x][y].setCard(getPlayerCard());
-        cardSlots[playerPositionX][playerPositionY].setCard(randomCard());
+    private void moveTo(final int x, final int y) {
+        isAnimating = true;
+        final Direction direction = getDirection(x, y);
+        final Direction oppositeDirection;
 
-        playerPositionX = x;
-        playerPositionY = y;
+
+        final CardSlot oppositeSlot;
+        if (getSlotByDirection(playerPositionX, playerPositionY, direction.getOpposite()) != null) {
+            oppositeSlot = getSlotByDirection(playerPositionX, playerPositionY, direction.getOpposite());
+            oppositeDirection = direction;
+        } else if (getSlotByDirection(playerPositionX, playerPositionY, direction.getOpposite().getNext()) != null) {
+            oppositeSlot = getSlotByDirection(playerPositionX, playerPositionY, direction.getOpposite().getNext());
+            oppositeDirection = direction.getNext();
+        } else {
+            oppositeSlot = getSlotByDirection(playerPositionX, playerPositionY, direction.getNext());
+            oppositeDirection = direction.getNext().getOpposite();
+        }
+        final Vector2 targetPosition = new Vector2(x, y);
+        final Vector2 oppositePosition = new Vector2(oppositeSlot.getSlotPositionX(), oppositeSlot.getSlotPositionY());
+
+
+
+        cardSlots[x][y].animate(CardSlot.Animation.DESTROY);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+
+                cardSlots[playerPositionX][playerPositionY].animate(CardSlot.Animation.MOVE, direction);
+
+//
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+
+                        cardSlots[x][y].setPosition(oppositeSlot.getX(), oppositeSlot.getY());
+                        final Card card = randomCard();
+
+                        cardSlots[x][y].setCard(card);
+                        cardSlots[x][y].redraw();
+
+
+                        oppositeSlot.animate(CardSlot.Animation.MOVE, oppositeDirection);
+
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                isAnimating = false;
+                                cardSlots[x][y].animate(CardSlot.Animation.CREATE);
+                                cardSlots[x][y].setSlotPosition(oppositePosition.x, oppositePosition.y);
+
+                                cardSlots[oppositePosition.x][oppositePosition.y] = cardSlots[targetPosition.x][targetPosition.y];
+
+                                cardSlots[targetPosition.x][targetPosition.y] = cardSlots[playerPositionX][playerPositionY];
+                                cardSlots[playerPositionX][playerPositionY] = oppositeSlot;
+
+                                playerPositionX = x;
+                                playerPositionY = y;
+
+                            }
+                        }, CardSlot.ANIMATION_MOVETO_DURATION);
+                    }
+                }, CardSlot.ANIMATION_MOVETO_DURATION);
+            }
+        }, CardSlot.ANIMATION_DESTROY_DURATION);
+
     }
 
+//    private CardSlot getFirstAvailableSlot(int x, int y, Direction startDirection) {
+//        for (int i = 0; i < 3; i++) {
+//
+//        }
+//    }
+
+
+
+    private Direction getDirection(int x, int y) {
+        if (x == playerPositionX && y > playerPositionY) {
+            return Direction.NORTH;
+        } else if (x > playerPositionX && y == playerPositionY) {
+            return Direction.EAST;
+        } else if (x == playerPositionX && y < playerPositionY) {
+            return Direction.SOUTH;
+        } else {
+            return Direction.WEST;
+        }
+    }
+
+    private CardSlot getSlotByDirection(int oldX, int oldY, Direction direction) {
+        int x = oldX, y = oldY;
+        switch (direction) {
+            case NORTH:
+                y = y + 1;
+                break;
+
+            case EAST:
+                x = x + 1;
+                break;
+
+            case SOUTH:
+                y = y - 1;
+                break;
+
+            case WEST:
+                x = x - 1;
+                break;
+        }
+        if (x >= 0 && x < GAME_SIZE && y >= 0 && y < GAME_SIZE) {
+            return cardSlots[x][y];
+        }
+        return null;
+    }
+
+
     private PlayerCard getPlayerCard() {
+        drawCardArray();
         return (PlayerCard) cardSlots[playerPositionX][playerPositionY].getCard();
+    }
+
+    private void drawCardArray() {
+        String array = "CARD SLOTS\n";
+        for (int i = GAME_SIZE-1; i >=0 ; i --) {
+            for (int ii = 0; ii < GAME_SIZE; ii++) {
+                array = array + cardSlots[ii][i].tak + " || ";
+            }
+            array = array + "\n";
+        }
+        System.out.println(array);
     }
 
     private boolean slotIsClickable(int x, int y) {
@@ -248,6 +405,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         cardSlots[1][1].setCard(playerCard);
         playerPositionX = 1;
         playerPositionY = 1;
+        cardSlots[1][1].tak = 1;
     }
 
     private void randomizeSlots() {
@@ -270,8 +428,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 break;
 
             case MONSTER:
-                card = new GoldCard(GOLD_MAX_POWER);
-//                card = new MonsterCard(MONSTER_MAX_POWER);
+//                card = new GoldCard(GOLD_MAX_POWER);
+                card = new MonsterCard(MONSTER_MAX_POWER);
                 break;
 
             default:
