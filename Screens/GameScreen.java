@@ -1,9 +1,7 @@
 package com.pregiel.cardgame.Screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -12,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
 import com.pregiel.cardgame.CardClasses.GoldCard;
+import com.pregiel.cardgame.CardClasses.HealthPotionCard;
 import com.pregiel.cardgame.CardClasses.MonsterCard;
 import com.pregiel.cardgame.CardClasses.PlayerCard;
 import com.pregiel.cardgame.CardClasses.WeaponCard;
@@ -23,8 +22,6 @@ import com.pregiel.cardgame.Utils.AssetsManager;
 import com.pregiel.cardgame.Utils.ScreenManager;
 import com.pregiel.cardgame.Utils.UIFactory;
 import com.pregiel.cardgame.Utils.Vector2;
-
-import java.text.RuleBasedCollator;
 
 
 /**
@@ -47,6 +44,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private static final int MONSTER_MAX_POWER = 15;
     private static final int GOLD_MAX_POWER = 10;
     private static final int WEAPON_MAX_POWER = 12;
+    private static final int HEALTH_POTION_MAX_POWER = 8;
 
     private static final int GAME_SIZE = 3;
 
@@ -54,8 +52,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
     private int playerPositionX, playerPositionY;
 
-    //    private SpriteBatch batch;
-//    private BitmapFont font;
     private OrthographicCamera camera;
     private CardSlot[][] cardSlots;
 
@@ -86,10 +82,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
 
         CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
-
-//        batch = new SpriteBatch();
-//        font = uiFactory.generateFont(UIFactory.CARDTEXT_SIZE);//new BitmapFont();
-//        font.getData().setScale(2f);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -125,14 +117,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private void drawScene() {
-        clear();
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
         Group screen = new Group();
         for (CardSlot[] slots : cardSlots) {
             for (final CardSlot slot : slots) {
-//                Group group = new Group();
-//                group.setPosition(slot.x, slot.y);
-//                group.setSize(slot.width, slot.height);
 
                 Image imgSlot = uiFactory.drawImage(slot.getBackgroundTexture());
                 imgSlot.setFillParent(true);
@@ -140,7 +127,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
                 slot.setImgCard(uiFactory.drawImage(slot.getCard().getCardTexture()));
                 slot.getImgCard().setFillParent(true);
-//                slot.addActor(imgCard);
 
                 Table table = new Table();
                 table.setFillParent(true);
@@ -166,11 +152,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
                     case WEAPON:
                         slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
-//                        table.add(uiFactory.createCardDescLabel("Power: ")).left();
-//                        table.add(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
                         break;
 
                     case MONSTER:
+                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+                        break;
+
+                    case HEALTH_POTION:
                         slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
                         break;
                 }
@@ -186,10 +174,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                 if (slot.isClickable(playerPositionX, playerPositionY)) {
                                     System.out.println("Move to: X: " + slot.getSlotPositionX() + " Y: " + slot.getSlotPositionY() + " " + slot.getCard());
                                     if (slot.getCard().use(getPlayerCard())) {
-//                                        slot.redraw();
+                                        slot.redraw();
                                         cardSlots[playerPositionX][playerPositionY].redraw();
                                         moveTo(slot.getSlotPositionX(), slot.getSlotPositionY());
-//                                drawScene();
                                     }
                                 }
                             } else {
@@ -430,6 +417,10 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
             case MONSTER:
 //                card = new GoldCard(GOLD_MAX_POWER);
                 card = new MonsterCard(MONSTER_MAX_POWER);
+                break;
+
+            case HEALTH_POTION:
+                card = new HealthPotionCard(HEALTH_POTION_MAX_POWER);
                 break;
 
             default:

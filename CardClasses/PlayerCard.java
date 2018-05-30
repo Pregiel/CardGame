@@ -1,8 +1,6 @@
 package com.pregiel.cardgame.CardClasses;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
-import com.pregiel.cardgame.Screens.GameScreen;
 import com.pregiel.cardgame.Utils.ScreenEnum;
 import com.pregiel.cardgame.Utils.ScreenManager;
 
@@ -15,17 +13,12 @@ public class PlayerCard extends Card {
     private int gold;
 
 
-    public PlayerCard() {
+    public PlayerCard(int power, int health) {
         super();
         gold = 0;
-//        setCardTexture(new Texture(GameScreen.PLAYERCARD_PATH));
-        setCardType(CardType.PLAYER);
-    }
-
-    public PlayerCard(int power, int health) {
-        this();
-        setPower(power);
         this.health = health;
+        setCardType(CardType.PLAYER);
+        setPower(power);
     }
 
     public int getHealth() {

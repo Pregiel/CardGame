@@ -6,8 +6,6 @@ import com.pregiel.cardgame.Utils.ScreenManager;
 
 public class MyGdxGame extends Game {
 
-
-
     //gradlew desktop:run
 
     @Override

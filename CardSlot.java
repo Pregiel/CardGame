@@ -2,7 +2,6 @@ package com.pregiel.cardgame;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
@@ -13,8 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pregiel.cardgame.CardClasses.Card;
 import com.pregiel.cardgame.Screens.GameScreen;
-
-import javax.swing.GroupLayout;
 
 
 /**
@@ -39,7 +36,6 @@ public class CardSlot extends Group {
 
 
     public CardSlot(int slotPositionX, int slotPositionY, int x, int y, int width, int height) {
-//        backgroundTexture = new Texture(com.pregiel.cardgame.Screens.GameScreen.BACKGROUNDTEXTURE_PATH);
         super();
         this.slotPositionX = slotPositionX;
         this.slotPositionY = slotPositionY;
@@ -66,11 +62,7 @@ public class CardSlot extends Group {
     }
 
     public void setImgCard(Image imgCard) {
-//        if (this.imgCard != null) {
-//            this.imgCard.remove();
-//        }
         this.imgCard = imgCard;
-//        this.imgCard.setFillParent(true);
         this.addActor(this.imgCard);
     }
 

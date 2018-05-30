@@ -90,28 +90,12 @@ public class UIFactory {
         };
     }
 
-//    public static TextButton createButton(String text) {
-//        return createButton(text, DEFAULT_FONT_SIZE);
-//    }
-
-
-//    public static TextButton createButton(String text, int size) {
-//        TextButton.TextButtonStyle textButtonStyle = getSkin().get(TextButton.TextButtonStyle.class);
-//        textButtonStyle.font = generateFont(size);
-//
-//        return new TextButton(text, textButtonStyle);
-//    }
-
     public TextButton createButton(String text, BitmapFont font) {
         TextButton.TextButtonStyle textButtonStyle = skin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = font;
 
         return new TextButton(text, textButtonStyle);
     }
-
-//    public Label createLabel(String text) {
-//        return createLabel(text, DEFAULT_FONT_SIZE);
-//    }
 
     public Label createLabel(String text, int size) {
         Label.LabelStyle labelStyle = getSkin().get(Label.LabelStyle.class);

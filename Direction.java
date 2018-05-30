@@ -18,9 +18,6 @@ public enum Direction {
 
             case SOUTH:
                 return NORTH;
-
-//                case WEST:
-//                    return EAST;
         }
         return EAST;
     }
@@ -35,7 +32,6 @@ public enum Direction {
 
             case SOUTH:
                 return WEST;
-
         }
         return NORTH;
     }

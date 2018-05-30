@@ -1,6 +1,5 @@
 package com.pregiel.cardgame.Screens;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
@@ -13,7 +12,6 @@ import com.pregiel.cardgame.Utils.UIFactory;
 
 public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
-    //    private Texture playTexture;
     private Label label;
     private TextButton btnPlay;
     private UIFactory uiFactory;
@@ -23,7 +21,6 @@ public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen 
         super();
         uiFactory = new UIFactory();
         assetsManager = new AssetsManager();
-//        playTexture = new Texture(Gdx.files.internal("img/button.jpg"));
     }
 
     @Override
@@ -45,6 +42,5 @@ public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen 
         super.dispose();
         label.remove();
         btnPlay.remove();
-//        playTexture.dispose();
     }
 }

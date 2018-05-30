@@ -9,7 +9,6 @@ import com.pregiel.cardgame.CardType;
  */
 
 public class AssetsManager extends AssetManager{
-//    private AssetManager assetManager;
 
     private static final String BACKGROUNDTEXTURE_PATH = "cardBackground.jpg";
     private static final String DEFAULTCARD_PATH = "defaultCard.png";
@@ -17,10 +16,10 @@ public class AssetsManager extends AssetManager{
     private static final String GOLDCARD_PATH = "goldCard.png";
     private static final String MONSTERCARD_PATH = "monsterCard.png";
     private static final String WEAPONCARD_PATH = "weaponCard.png";
+    private static final String HEALTH_POCTIONCARD_PATH = "healthPotionCard.png";
 
 
     public AssetsManager() {
-//        this.assetManager = new AssetManager();
         super();
         load(BACKGROUNDTEXTURE_PATH, Texture.class);
         load(DEFAULTCARD_PATH, Texture.class);
@@ -28,6 +27,7 @@ public class AssetsManager extends AssetManager{
         load(GOLDCARD_PATH, Texture.class);
         load(MONSTERCARD_PATH, Texture.class);
         load(WEAPONCARD_PATH, Texture.class);
+        load(HEALTH_POCTIONCARD_PATH, Texture.class);
         finishLoading();
     }
 
@@ -43,6 +43,9 @@ public class AssetsManager extends AssetManager{
                 return get(WEAPONCARD_PATH, Texture.class);
             case GOLD:
                 return get(GOLDCARD_PATH, Texture.class);
+            case HEALTH_POTION:
+                return get(HEALTH_POCTIONCARD_PATH, Texture.class);
+
         }
         return get(DEFAULTCARD_PATH, Texture.class);
     }

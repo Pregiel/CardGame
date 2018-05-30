@@ -3,20 +3,19 @@ package com.pregiel.cardgame.CardClasses;
 import com.pregiel.cardgame.CardType;
 
 /**
- * Created by Pregiel on 17.05.2018.
+ * Created by Pregiel on 30.05.2018.
  */
 
-public class GoldCard extends Card {
-
-    public GoldCard(int maxPower) {
+public class HealthPotionCard extends Card {
+    public HealthPotionCard(int maxPower) {
         super();
-        setCardType(CardType.GOLD);
+        setCardType(CardType.HEALTH_POTION);
         randomizePower(maxPower);
     }
 
     @Override
     public boolean use(PlayerCard playerCard) {
-        playerCard.addGold(getPower());
+        playerCard.addHealth(getPower());
         return true;
     }
 }

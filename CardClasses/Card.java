@@ -2,7 +2,6 @@ package com.pregiel.cardgame.CardClasses;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
-import com.pregiel.cardgame.Screens.GameScreen;
 
 import java.util.Random;
 
@@ -19,7 +18,6 @@ public class Card {
     public Card() {
         cardType = CardType.NONE;
         power = 0;
-//        cardTexture = new Texture(GameScreen.DEFAULTCARD_PATH);
     }
 
     public Card(int maxPower) {
