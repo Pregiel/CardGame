@@ -2,6 +2,7 @@ package com.pregiel.cardgame.CardClasses;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
+import com.pregiel.cardgame.Utils.AssetsManager;
 
 import java.util.Random;
 
@@ -28,6 +29,7 @@ public class Card {
     public void randomizePower(int maxPower) {
         Random r = new Random();
         power = r.nextInt(maxPower - 1) + 1;
+
     }
 
     public int getPower() {
@@ -50,6 +52,10 @@ public class Card {
 
     public void setCardTexture(Texture cardTexture) {
         this.cardTexture = cardTexture;
+    }
+
+    public void setCardTexture(AssetsManager assetsManager) {
+        setCardTexture(assetsManager.getCardTexture(getCardType()));
     }
 
     public CardType getCardType() {

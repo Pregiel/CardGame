@@ -181,9 +181,22 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                         slot.redraw();
                                         cardSlots[playerPositionX][playerPositionY].redraw();
                                         moveToSequence(slot.getSlotPositionX(), slot.getSlotPositionY());
-                                    } else if (slot.getCard().getCardType() == CardType.CHEST) {
-                                        changeCardSequence(slot);
+                                    } else {
+                                        if (slot.getCard().getCardType() == CardType.CHEST) {
+                                            changeCardSequence(slot, randomCard());
+                                        }
+                                        if (slot.getCard().getCardType() == CardType.MONSTER) {
+                                            getPlayerCardSlot().redraw();
+                                            slot.redraw();
+                                            if (slot.getCard().getPower() == 0) {
+                                                GoldCard newCard = new GoldCard();
+                                                newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
+                                                newCard.setCardTexture(assetsManager);
+                                                changeCardSequence(slot, newCard);
+                                            }
+                                        }
                                     }
+
                                 }
                             } else {
                                 System.out.println(slot.getSlotPositionX() + " " + slot.getSlotPositionY() + " " + slot.getCard());
@@ -254,7 +267,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 //        }
 //    }
 
-    private void changeCardSequence(final CardSlot slot) {
+    private void changeCardSequence(final CardSlot slot, final Card newCard) {
         isAnimating = true;
 
         slot.animate(CardSlot.Animation.DESTROY);
@@ -262,7 +275,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                slot.setCard(randomCard());
+                slot.setCard(newCard);
                 slot.redraw();
                 slot.animate(CardSlot.Animation.CREATE);
                 Timer.schedule(new Timer.Task() {
@@ -294,7 +307,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         }
         final Vector2 targetPosition = new Vector2(x, y);
         final Vector2 oppositePosition = new Vector2(oppositeSlot.getSlotPositionX(), oppositeSlot.getSlotPositionY());
-
 
 
         cardSlots[x][y].animate(CardSlot.Animation.DESTROY);
@@ -391,9 +403,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         return (PlayerCard) cardSlots[playerPositionX][playerPositionY].getCard();
     }
 
+    private PlayerCardSlot getPlayerCardSlot() {
+        return (PlayerCardSlot) cardSlots[playerPositionX][playerPositionY];
+    }
+
     private void drawCardArray() {
         String array = "CARD SLOTS\n";
-        for (int i = GAME_SIZE-1; i >=0 ; i --) {
+        for (int i = GAME_SIZE - 1; i >= 0; i--) {
             for (int ii = 0; ii < GAME_SIZE; ii++) {
                 array = array + cardSlots[ii][i].tak + " || ";
             }
@@ -404,7 +420,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
     private void spawnPlayer() {
         PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH);
-        playerCard.setCardTexture(assetsManager.getCardTexture(CardType.PLAYER));
+        playerCard.setCardTexture(assetsManager);
         cardSlots[1][1].setCard(playerCard);
         playerPositionX = 1;
         playerPositionY = 1;
@@ -446,7 +462,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
             default:
                 card = new GoldCard(GOLD_MAX_POWER);
         }
-        card.setCardTexture(assetsManager.getCardTexture(type));
+        card.setCardTexture(assetsManager);
         return card;
     }
 

@@ -7,10 +7,13 @@ import com.pregiel.cardgame.CardType;
  */
 
 public class GoldCard extends Card {
-
-    public GoldCard(int maxPower) {
+    public GoldCard() {
         super();
         setCardType(CardType.GOLD);
+    }
+
+    public GoldCard(int maxPower) {
+        this();
         randomizePower(maxPower);
     }
 
