@@ -7,7 +7,7 @@ import java.util.Random;
  */
 
 public enum CardType {
-    NONE, PLAYER, MONSTER, GOLD, WEAPON, HEALTH_POTION;
+    NONE, PLAYER, MONSTER, GOLD, WEAPON, HEALTH_POTION, CHEST;
 
     private static final int size = values().length - 1;
 
@@ -35,6 +35,9 @@ public enum CardType {
             case 4:
                 return HEALTH_POTION;
 
+            case 5:
+                return CHEST;
+
             default:
                 return NONE;
         }
@@ -57,6 +60,9 @@ public enum CardType {
 
             case HEALTH_POTION:
                 return "HEALTH_POTION";
+
+            case CHEST:
+                return "CHEST";
 
             default:
                 return "NONE";

@@ -46,14 +46,19 @@ public class CardSlot extends Group {
 
     public void redraw() {
         imgCard.setDrawable(new TextureRegionDrawable(new TextureRegion(card.getCardTexture())));
-        lblPower.setText(String.valueOf(card.getPower()));
-        switch (getCard().getCardType()) {
-            case GOLD:
-                lblPowerName.setText("Amount: ");
-                break;
+        if (getCard().getPower() == -1) {
+            lblPowerName.setText("");
+            lblPower.setText("");
+        } else {
+            lblPower.setText(String.valueOf(card.getPower()));
+            switch (getCard().getCardType()) {
+                case GOLD:
+                    lblPowerName.setText("Amount: ");
+                    break;
 
-            default:
-                lblPowerName.setText("Power: ");
+                default:
+                    lblPowerName.setText("Power: ");
+            }
         }
     }
 
@@ -71,7 +76,11 @@ public class CardSlot extends Group {
     }
 
     public void setLblPower(Label lblPower) {
+        if (lblPower.getText().toString().equals("-1")) {
+            lblPower.setText("");
+        }
         this.lblPower = lblPower;
+
     }
 
     public Label getLblPowerName() {

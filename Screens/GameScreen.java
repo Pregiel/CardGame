@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
+import com.pregiel.cardgame.CardClasses.ChestCard;
 import com.pregiel.cardgame.CardClasses.GoldCard;
 import com.pregiel.cardgame.CardClasses.HealthPotionCard;
 import com.pregiel.cardgame.CardClasses.MonsterCard;
@@ -161,6 +162,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                     case HEALTH_POTION:
                         slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
                         break;
+
+                    case CHEST:
+                        slot.setLblPowerName(uiFactory.createCardDescLabel(""));
                 }
                 slot.setLblPower(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
                 table.add(slot.getLblPowerName()).left();
@@ -176,7 +180,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                     if (slot.getCard().use(getPlayerCard())) {
                                         slot.redraw();
                                         cardSlots[playerPositionX][playerPositionY].redraw();
-                                        moveTo(slot.getSlotPositionX(), slot.getSlotPositionY());
+                                        moveToSequence(slot.getSlotPositionX(), slot.getSlotPositionY());
+                                    } else if (slot.getCard().getCardType() == CardType.CHEST) {
+                                        changeCardSequence(slot);
                                     }
                                 }
                             } else {
@@ -248,7 +254,28 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 //        }
 //    }
 
-    private void moveTo(final int x, final int y) {
+    private void changeCardSequence(final CardSlot slot) {
+        isAnimating = true;
+
+        slot.animate(CardSlot.Animation.DESTROY);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                slot.setCard(randomCard());
+                slot.redraw();
+                slot.animate(CardSlot.Animation.CREATE);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        isAnimating = false;
+                    }
+                }, CardSlot.ANIMATION_CREATE_DURATION);
+            }
+        }, CardSlot.ANIMATION_DESTROY_DURATION);
+    }
+
+    private void moveToSequence(final int x, final int y) {
         isAnimating = true;
         final Direction direction = getDirection(x, y);
         final Direction oppositeDirection;
@@ -284,9 +311,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                     public void run() {
 
                         cardSlots[x][y].setPosition(oppositeSlot.getX(), oppositeSlot.getY());
-                        final Card card = randomCard();
-
-                        cardSlots[x][y].setCard(card);
+                        cardSlots[x][y].setCard(randomCard());
                         cardSlots[x][y].redraw();
 
 
@@ -296,7 +321,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                isAnimating = false;
                                 cardSlots[x][y].animate(CardSlot.Animation.CREATE);
                                 cardSlots[x][y].setSlotPosition(oppositePosition.x, oppositePosition.y);
 
@@ -308,6 +332,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                 playerPositionX = x;
                                 playerPositionY = y;
 
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        isAnimating = false;
+                                    }
+                                }, CardSlot.ANIMATION_CREATE_DURATION);
+
                             }
                         }, CardSlot.ANIMATION_MOVETO_DURATION);
                     }
@@ -316,14 +347,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         }, CardSlot.ANIMATION_DESTROY_DURATION);
 
     }
-
-//    private CardSlot getFirstAvailableSlot(int x, int y, Direction startDirection) {
-//        for (int i = 0; i < 3; i++) {
-//
-//        }
-//    }
-
-
 
     private Direction getDirection(int x, int y) {
         if (x == playerPositionX && y > playerPositionY) {
@@ -379,13 +402,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         System.out.println(array);
     }
 
-    private boolean slotIsClickable(int x, int y) {
-        return (playerPositionX + 1 == x && playerPositionY == y) ||
-                (playerPositionX - 1 == x && playerPositionY == y) ||
-                (playerPositionX == x && playerPositionY + 1 == y) ||
-                (playerPositionX == x && playerPositionY - 1 == y);
-    }
-
     private void spawnPlayer() {
         PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH);
         playerCard.setCardTexture(assetsManager.getCardTexture(CardType.PLAYER));
@@ -421,6 +437,10 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
             case HEALTH_POTION:
                 card = new HealthPotionCard(HEALTH_POTION_MAX_POWER);
+                break;
+
+            case CHEST:
+                card = new ChestCard();
                 break;
 
             default:
