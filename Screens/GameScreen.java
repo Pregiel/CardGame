@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
 import com.pregiel.cardgame.CardClasses.ChestCard;
@@ -37,6 +38,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     public static int CARD_PADDING;
     public static int CARDSLOT_WIDTH;
     public static int CARDSLOT_HEIGHT;
+    public static int CARDSLOT_PADDING;
 
 
     private static final int PLAYER_DEFAULT_HEALTH = 10;
@@ -79,7 +81,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
         CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
         CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
-        int CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
+        CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
 
 
         CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
@@ -419,7 +421,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private void spawnPlayer() {
-        PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH);
+        PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH, 1);
         playerCard.setCardTexture(assetsManager);
         cardSlots[1][1].setCard(playerCard);
         playerPositionX = 1;

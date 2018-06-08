@@ -4,60 +4,83 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.pregiel.cardgame.CardType;
 
+import java.util.Random;
+
 /**
  * Created by Pregiel on 27.05.2018.
  */
 
-public class AssetsManager extends AssetManager{
+public class AssetsManager extends AssetManager {
 
-    private static final String BACKGROUNDTEXTURE_PATH = "cardBackground.jpg";
-    private static final String DEFAULTCARD_PATH = "defaultCard.png";
-    private static final String PLAYERCARD_PATH = "playerCard.png";
-    private static final String GOLDCARD_PATH = "goldCard.png";
-    private static final String MONSTERCARD_PATH = "monsterCard.png";
-    private static final String WEAPONCARD_PATH = "weaponCard.png";
-    private static final String HEALTH_POTIONCARD_PATH = "healthPotionCard.png";
-    private static final String CHESTCARD_PATH = "chestCard.png";
+    private static final String BACKGROUNDTEXTURE = "cardBackground.jpg";
+    private static final String DEFAULTCARD = "defaultCard.png";
+    private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png"};
+    //            "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
+    private static final String GOLDCARD = "cards/coin.png";
+    private static final String[] MONSTERCARD = {"cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
+    private static final String[] WEAPONCARD = {"cards/weapon1.png", "cards/weapon2.png", "cards/weapon3.png"};
+    private static final String LIFEPOTIONCARD = "cards/lifePotion.png";
+    private static final String CHESTCARD = "cards/chest.png";
 
 
     public AssetsManager() {
         super();
-        load(BACKGROUNDTEXTURE_PATH, Texture.class);
-        load(DEFAULTCARD_PATH, Texture.class);
-        load(PLAYERCARD_PATH, Texture.class);
-        load(GOLDCARD_PATH, Texture.class);
-        load(MONSTERCARD_PATH, Texture.class);
-        load(WEAPONCARD_PATH, Texture.class);
-        load(HEALTH_POTIONCARD_PATH, Texture.class);
-        load(CHESTCARD_PATH, Texture.class);
+        load(BACKGROUNDTEXTURE, Texture.class);
+        load(DEFAULTCARD, Texture.class);
+        for (String s : PLAYERCARD) {
+            load(s, Texture.class);
+        }
+        load(GOLDCARD, Texture.class);
+        for (String s : MONSTERCARD) {
+            load(s, Texture.class);
+        }
+        for (String s : WEAPONCARD) {
+            load(s, Texture.class);
+        }
+        load(LIFEPOTIONCARD, Texture.class);
+        load(CHESTCARD, Texture.class);
         finishLoading();
     }
 
 
-
     public Texture getCardTexture(CardType type) {
+        Random r = new Random();
         switch (type) {
             case PLAYER:
-                return get(PLAYERCARD_PATH, Texture.class);
+                return get(PLAYERCARD[0], Texture.class);
             case MONSTER:
-                return get(MONSTERCARD_PATH, Texture.class);
+                return get(MONSTERCARD[r.nextInt(MONSTERCARD.length)], Texture.class);
             case WEAPON:
-                return get(WEAPONCARD_PATH, Texture.class);
+                return get(WEAPONCARD[r.nextInt(WEAPONCARD.length)], Texture.class);
             case GOLD:
-                return get(GOLDCARD_PATH, Texture.class);
+                return get(GOLDCARD, Texture.class);
             case HEALTH_POTION:
-                return get(HEALTH_POTIONCARD_PATH, Texture.class);
+                return get(LIFEPOTIONCARD, Texture.class);
             case CHEST:
-                return get(CHESTCARD_PATH, Texture.class);
+                return get(CHESTCARD, Texture.class);
 
         }
-        return get(DEFAULTCARD_PATH, Texture.class);
+        return get(DEFAULTCARD, Texture.class);
+    }
+
+    public Texture getCardTexture(CardType type, int i) {
+        switch (type) {
+            case PLAYER:
+                return get(PLAYERCARD[i], Texture.class);
+
+            case MONSTER:
+                return get(MONSTERCARD[i], Texture.class);
+
+            case WEAPON:
+                return get(WEAPONCARD[i], Texture.class);
+
+        }
+        return getCardTexture(type);
     }
 
     public Texture getBackgroundTexture() {
-        return get(BACKGROUNDTEXTURE_PATH, Texture.class);
+        return get(BACKGROUNDTEXTURE, Texture.class);
     }
-
 
 
 }

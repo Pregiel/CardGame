@@ -1,6 +1,7 @@
 package com.pregiel.cardgame.CardClasses;
 
 import com.pregiel.cardgame.CardType;
+import com.pregiel.cardgame.Utils.AssetsManager;
 import com.pregiel.cardgame.Utils.ScreenEnum;
 import com.pregiel.cardgame.Utils.ScreenManager;
 
@@ -11,11 +12,13 @@ import com.pregiel.cardgame.Utils.ScreenManager;
 public class PlayerCard extends Card {
     private int health;
     private int gold;
+    private int character;
 
 
-    public PlayerCard(int power, int health) {
+    public PlayerCard(int power, int health, int character) {
         super();
         gold = 0;
+        this.character = character;
         this.health = health;
         setCardType(CardType.PLAYER);
         setPower(power);
@@ -60,7 +63,8 @@ public class PlayerCard extends Card {
                 '}';
     }
 
-
-
-
+    @Override
+    public void setCardTexture(AssetsManager assetsManager) {
+        setCardTexture(assetsManager.getCardTexture(getCardType(), character));
+    }
 }

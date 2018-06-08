@@ -17,7 +17,7 @@ public class WeaponCard extends Card {
 
     @Override
     public boolean use(PlayerCard playerCard) {
-        if (playerCard.getPower() > getPower()) {
+        if (playerCard.getPower() >= getPower()) {
             playerCard.addPower(1);
         } else {
             playerCard.setPower(getPower());
