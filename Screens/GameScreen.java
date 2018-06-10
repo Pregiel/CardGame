@@ -51,6 +51,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
     private static final int GAME_SIZE = 3;
 
+
     private boolean isAnimating = false;
 
     private int playerPositionX, playerPositionY;
@@ -421,7 +422,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private void spawnPlayer() {
-        PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH, 1);
+        PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH, MainMenuScreen.getCharacter());
         playerCard.setCardTexture(assetsManager);
         cardSlots[1][1].setCard(playerCard);
         playerPositionX = 1;

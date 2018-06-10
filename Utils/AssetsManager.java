@@ -14,10 +14,10 @@ public class AssetsManager extends AssetManager {
 
     private static final String BACKGROUNDTEXTURE = "cardBackground.jpg";
     private static final String DEFAULTCARD = "defaultCard.png";
-    private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png"};
-    //            "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
+    private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png",
+                "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
     private static final String GOLDCARD = "cards/coin.png";
-    private static final String[] MONSTERCARD = {"cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
+    private static final String[] MONSTERCARD = {"cards/monster1.png", "cards/monster2.png", "cards/monster3.png"};
     private static final String[] WEAPONCARD = {"cards/weapon1.png", "cards/weapon2.png", "cards/weapon3.png"};
     private static final String LIFEPOTIONCARD = "cards/lifePotion.png";
     private static final String CHESTCARD = "cards/chest.png";
@@ -80,6 +80,10 @@ public class AssetsManager extends AssetManager {
 
     public Texture getBackgroundTexture() {
         return get(BACKGROUNDTEXTURE, Texture.class);
+    }
+
+    public static int playerAmount() {
+        return PLAYERCARD.length;
     }
 
 
