@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
 import com.pregiel.cardgame.Screens.GameScreen;
 
@@ -33,6 +34,7 @@ public class CardSlot extends Group {
     public static final float ANIMATION_MOVETO_DURATION = 0.4f;
     public static final float ANIMATION_DESTROY_DURATION = 0.2f;
     public static final float ANIMATION_CREATE_DURATION = 0.2f;
+    public static final float ANIMATION_DAMAGE_DURATION = 0.06f;
 
 
     public CardSlot(int slotPositionX, int slotPositionY, int x, int y, int width, int height) {
@@ -145,11 +147,35 @@ public class CardSlot extends Group {
             case MOVE:
                 action = moveToAnimation(getX(), getY(), direction);
                 break;
+
+            case DAMAGE:
+                action = damageAnimation();
+                break;
+
+            case UNDAMAGE:
+                action = undamageAnimation();
+                break;
         }
 
         if (action != null) {
             this.addAction(action);
         }
+    }
+
+    private ScaleToAction damageAnimation() {
+        ScaleToAction action = new ScaleToAction();
+        action.setScale(0.8f);
+        action.setDuration(ANIMATION_DAMAGE_DURATION);
+
+        return action;
+    }
+
+    private ScaleToAction undamageAnimation() {
+        ScaleToAction action = new ScaleToAction();
+        action.setScale(1);
+        action.setDuration(ANIMATION_DAMAGE_DURATION);
+
+        return action;
     }
 
     private MoveToAction moveToAnimation(float x, float y, Direction direction) {
@@ -206,6 +232,6 @@ public class CardSlot extends Group {
     }
 
     public enum Animation {
-        DESTROY, CREATE, MOVE
+        DESTROY, CREATE, MOVE, DAMAGE, UNDAMAGE
     }
 }

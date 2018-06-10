@@ -196,6 +196,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                                 newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
                                                 newCard.setCardTexture(assetsManager);
                                                 changeCardSequence(slot, newCard);
+                                            } else {
+                                                damageCardSequence(getPlayerCardSlot());
+                                                damageCardSequence(slot);
                                             }
                                         }
                                     }
@@ -289,6 +292,27 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 }, CardSlot.ANIMATION_CREATE_DURATION);
             }
         }, CardSlot.ANIMATION_DESTROY_DURATION);
+    }
+
+    private void damageCardSequence(final CardSlot slot) {
+        isAnimating = true;
+
+        slot.animate(CardSlot.Animation.DAMAGE);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                slot.animate(CardSlot.Animation.UNDAMAGE);
+
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        isAnimating = false;
+                    }
+                }, CardSlot.ANIMATION_DAMAGE_DURATION);
+            }
+        }, CardSlot.ANIMATION_DAMAGE_DURATION);
+
     }
 
     private void moveToSequence(final int x, final int y) {
