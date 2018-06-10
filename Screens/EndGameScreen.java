@@ -13,27 +13,24 @@ import com.pregiel.cardgame.Utils.UIFactory;
 public class EndGameScreen extends AbstractScreen {
     private Label label;
     private TextButton btnPlay;
-    private UIFactory uiFactory;
-    private AssetsManager assetsManager;
 
     public EndGameScreen() {
         super();
-        uiFactory = new UIFactory();
-        assetsManager = new AssetsManager();
     }
 
     @Override
     public void buildStage() {
-        label = uiFactory.createLabel("YOU DIED", uiFactory.getLargeFont());
+        super.buildStage();
+        label = getUiFactory().createLabel("YOU DIED", getUiFactory().getLargeFont());
         label.setPosition(getWidth() / 2, 1000, Align.center);
         addActor(label);
 
 
-        btnPlay = uiFactory.createButton("PLAY", uiFactory.getButtonFont());
+        btnPlay = getUiFactory().createButton("PLAY", getUiFactory().getButtonFont());
         btnPlay.setPosition(getWidth() / 2, getHeight() / 2, Align.center);
         addActor(btnPlay);
 
-        btnPlay.addListener(uiFactory.createListener(com.pregiel.cardgame.Utils.ScreenEnum.GAME));}
+        btnPlay.addListener(getUiFactory().createListener(com.pregiel.cardgame.Utils.ScreenEnum.GAME));}
     @Override
     public void dispose() {
         super.dispose();

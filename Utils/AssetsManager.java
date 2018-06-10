@@ -13,6 +13,7 @@ import java.util.Random;
 public class AssetsManager extends AssetManager {
 
     private static final String BACKGROUNDTEXTURE = "cardBackground.jpg";
+    private static final String BACKGROUND = "img/background.png";
     private static final String DEFAULTCARD = "defaultCard.png";
     private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png",
                 "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
@@ -26,6 +27,7 @@ public class AssetsManager extends AssetManager {
     public AssetsManager() {
         super();
         load(BACKGROUNDTEXTURE, Texture.class);
+        load(BACKGROUND, Texture.class);
         load(DEFAULTCARD, Texture.class);
         for (String s : PLAYERCARD) {
             load(s, Texture.class);
@@ -86,5 +88,10 @@ public class AssetsManager extends AssetManager {
         return PLAYERCARD.length;
     }
 
+    public Texture getBackground() {
+        Texture texture = get(BACKGROUND, Texture.class);
+        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        return texture;
+    }
 
 }

@@ -1,12 +1,16 @@
 package com.pregiel.cardgame.Screens;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
@@ -34,11 +38,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private static double CARDSLOT_WIDTH_RATIO;
     private static double CARDSLOT_HEIGHT_RATIO;
     private static double CARDSLOT_PADDING_RATIO;
+    private static double TOPBAR_RATIO;
 
     public static int CARD_PADDING;
     public static int CARDSLOT_WIDTH;
     public static int CARDSLOT_HEIGHT;
     public static int CARDSLOT_PADDING;
+    public static int TOPBAR_HEIGHT;
 
 
     private static final int PLAYER_DEFAULT_HEALTH = 10;
@@ -60,29 +66,27 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private CardSlot[][] cardSlots;
 
 
-    private UIFactory uiFactory;
-    private AssetsManager assetsManager;
-
 
     public GameScreen() {
         super();
-
-        uiFactory = new UIFactory();
-        assetsManager = new AssetsManager();
     }
 
     @Override
     public void buildStage() {
+        super.buildStage();
         int SCREEN_WIDTH = ScreenManager.SCREEN_WIDTH;
         int SCREEN_HEIGHT = ScreenManager.SCREEN_HEIGHT;
 
         CARDSLOT_PADDING_RATIO = 0.025;
+        TOPBAR_RATIO = 0.1;
         CARDSLOT_WIDTH_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
-        CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
+        CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO) - TOPBAR_RATIO) / GAME_SIZE;
+
 
         CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
         CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
         CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
+        TOPBAR_HEIGHT = (int) (SCREEN_HEIGHT * TOPBAR_RATIO);
 
 
         CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
@@ -107,7 +111,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 }
 
 
-                cardSlots[i][ii].setBackgroundTexture(assetsManager.getBackgroundTexture());
+                cardSlots[i][ii].setBackgroundTexture(getAssetsManager().getBackgroundTexture());
                 cardSlots[i][ii].setScale(0);
                 cardSlots[i][ii].animate(CardSlot.Animation.CREATE);
             }
@@ -121,15 +125,35 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private void drawScene() {
+//        Group group = new Group();
+//        group.setSize(ScreenManager.SCREEN_WIDTH, TOPBAR_HEIGHT);
+////        group.setPosition(0, ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
+//        group.setPosition(50,50);
+//        group.setColor(new Color(1,1,1,0));
+//        addActor(group);
+
+
+
+        Table topBar = new Table();
+        topBar.setWidth(ScreenManager.SCREEN_WIDTH);
+        topBar.setHeight(TOPBAR_HEIGHT);
+        topBar.setPosition(0, ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
+
+        Label lblGold = getUiFactory().createLabel("tak", 22);
+
+        topBar.add(lblGold);
+
+        addActor(topBar);
+
         Group screen = new Group();
         for (CardSlot[] slots : cardSlots) {
             for (final CardSlot slot : slots) {
 
-                Image imgSlot = uiFactory.drawImage(slot.getBackgroundTexture());
+                Image imgSlot = getUiFactory().drawImage(slot.getBackgroundTexture());
                 imgSlot.setFillParent(true);
                 slot.addActor(imgSlot);
 
-                slot.setImgCard(uiFactory.drawImage(slot.getCard().getCardTexture()));
+                slot.setImgCard(getUiFactory().drawImage(slot.getCard().getCardTexture()));
                 slot.getImgCard().setFillParent(true);
 
                 Table table = new Table();
@@ -139,37 +163,37 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
                 switch (slot.getCard().getCardType()) {
                     case PLAYER:
-                        ((PlayerCardSlot) slot).setLblGold(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getGold())));
-                        table.add(uiFactory.createCardDescLabel("Gold: ")).left();
+                        ((PlayerCardSlot) slot).setLblGold(getUiFactory().createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getGold())));
+                        table.add(getUiFactory().createCardDescLabel("Gold: ")).left();
                         table.add(((PlayerCardSlot) slot).getLblGold());
                         table.row();
-                        ((PlayerCardSlot) slot).setLblHealth(uiFactory.createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())));
-                        table.add(uiFactory.createCardDescLabel("Health: ")).left();
+                        ((PlayerCardSlot) slot).setLblHealth(getUiFactory().createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())));
+                        table.add(getUiFactory().createCardDescLabel("Health: ")).left();
                         table.add(((PlayerCardSlot) slot).getLblHealth());
                         table.row();
-                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
                         break;
 
                     case GOLD:
-                        slot.setLblPowerName(uiFactory.createCardDescLabel("Amount: "));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Amount: "));
                         break;
 
                     case WEAPON:
-                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
                         break;
 
                     case MONSTER:
-                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
                         break;
 
                     case HEALTH_POTION:
-                        slot.setLblPowerName(uiFactory.createCardDescLabel("Power: "));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
                         break;
 
                     case CHEST:
-                        slot.setLblPowerName(uiFactory.createCardDescLabel(""));
+                        slot.setLblPowerName(getUiFactory().createCardDescLabel(""));
                 }
-                slot.setLblPower(uiFactory.createCardDescLabel(String.valueOf(slot.getCard().getPower())));
+                slot.setLblPower(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())));
                 table.add(slot.getLblPowerName()).left();
                 table.add(slot.getLblPower());
 
@@ -194,7 +218,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                             if (slot.getCard().getPower() == 0) {
                                                 GoldCard newCard = new GoldCard();
                                                 newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
-                                                newCard.setCardTexture(assetsManager);
+                                                newCard.setCardTexture(getAssetsManager());
                                                 changeCardSequence(slot, newCard);
                                             } else {
                                                 damageCardSequence(getPlayerCardSlot());
@@ -447,7 +471,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
     private void spawnPlayer() {
         PlayerCard playerCard = new PlayerCard(PLAYER_DEFAULT_POWER, PLAYER_DEFAULT_HEALTH, MainMenuScreen.getCharacter());
-        playerCard.setCardTexture(assetsManager);
+        playerCard.setCardTexture(getAssetsManager());
         cardSlots[1][1].setCard(playerCard);
         playerPositionX = 1;
         playerPositionY = 1;
@@ -490,7 +514,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 card = new GoldCard(GOLD_MAX_POWER);
         }
 
-        card.setCardTexture(assetsManager);
+        card.setCardTexture(getAssetsManager());
         return card;
     }
 
