@@ -8,11 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ScaleToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
+import com.pregiel.cardgame.CardClasses.PlayerCard;
 import com.pregiel.cardgame.Screens.GameScreen;
+import com.pregiel.cardgame.Utils.AssetsManager;
+import com.pregiel.cardgame.Utils.UIFactory;
 
 
 /**
@@ -25,7 +29,10 @@ public class CardSlot extends Group {
     private Texture backgroundTexture;
 
     private Image imgCard;
-    private Label lblPower, lblPowerName;
+
+    private Table table;
+
+    private ImageLabel ilblPower;
 
     public int tak = 0;
 
@@ -46,21 +53,50 @@ public class CardSlot extends Group {
         setOrigin(Align.center);
     }
 
-    public void redraw() {
+    public void redraw(UIFactory uiFactory, AssetsManager assetsManager) {
         imgCard.setDrawable(new TextureRegionDrawable(new TextureRegion(card.getCardTexture())));
         if (getCard().getPower() == -1) {
-            lblPowerName.setText("");
-            lblPower.setText("");
+            ilblPower.setText("");
         } else {
-            lblPower.setText(String.valueOf(card.getPower()));
+            ilblPower.setText(String.valueOf(card.getPower()));
+        }
+
+
+        if (getCard().getCardType() != CardType.PLAYER) {
+            table.removeActor(ilblPower);
             switch (getCard().getCardType()) {
+
                 case GOLD:
-                    lblPowerName.setText("Amount: ");
+                    ilblPower.setImage(uiFactory.drawImage(assetsManager.getGold()));
+                    table.top().right();
                     break;
 
-                default:
-                    lblPowerName.setText("Power: ");
+                case WEAPON:
+                    ilblPower.setImage(uiFactory.drawImage(assetsManager.getPower()));
+                    table.top().right();
+
+                    break;
+
+                case MONSTER:
+                    ilblPower.setImage(uiFactory.drawImage(assetsManager.getPower()));
+                    table.bottom().right();
+
+                    break;
+
+                case HEALTH_POTION:
+                    ilblPower.setImage(uiFactory.drawImage(assetsManager.getHeart()));
+                    table.top().right();
+
+                    break;
+
+                case CHEST:
+                    ilblPower.removeImage();
+                    table.top().right();
+
+
             }
+            table.add(getIlblPower());
+
         }
     }
 
@@ -73,24 +109,19 @@ public class CardSlot extends Group {
         this.addActor(this.imgCard);
     }
 
-    public Label getLblPower() {
-        return lblPower;
+    public ImageLabel getIlblPower() {
+        return ilblPower;
     }
 
-    public void setLblPower(Label lblPower) {
-        if (lblPower.getText().toString().equals("-1")) {
-            lblPower.setText("");
+    public void setIlblPower(ImageLabel ilblPower) {
+        if (ilblPower.getText().toString().equals("-1")) {
+            ilblPower.setText("");
         }
-        this.lblPower = lblPower;
-
+        this.ilblPower = ilblPower;
     }
 
-    public Label getLblPowerName() {
-        return lblPowerName;
-    }
-
-    public void setLblPowerName(Label lblPowerName) {
-        this.lblPowerName = lblPowerName;
+    public void setTable(Table table) {
+        this.table = table;
     }
 
     public int getSlotPositionX() {

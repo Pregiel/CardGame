@@ -126,6 +126,12 @@ public class UIFactory {
         return new Image(new TextureRegionDrawable(new TextureRegion(texture)));
     }
 
+    public Image drawImage(Texture texture, float width, float height) {
+        Image image = new Image(new TextureRegionDrawable(new TextureRegion(texture)));
+        image.setSize(width, height);
+        return image;
+    }
+
     public Image drawBackground(AssetsManager assetsManager) {
         Texture texture = assetsManager.getBackground();
         TextureRegion textureRegion = new TextureRegion(texture);

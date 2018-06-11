@@ -21,6 +21,7 @@ import com.pregiel.cardgame.CardClasses.WeaponCard;
 import com.pregiel.cardgame.CardSlot;
 import com.pregiel.cardgame.CardType;
 import com.pregiel.cardgame.Direction;
+import com.pregiel.cardgame.ImageLabel;
 import com.pregiel.cardgame.PlayerCardSlot;
 import com.pregiel.cardgame.Utils.ScreenEnum;
 import com.pregiel.cardgame.Utils.ScreenManager;
@@ -33,14 +34,20 @@ import com.pregiel.cardgame.Utils.Vector2;
 
 public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
+    private static final double CARDSLOT_PADDING_RATIO = 0.025;
+    private static final double TOPBAR_RATIO = 0.1;
+    private static final double ICON_RATIO = 0.085;
+
     public static int CARD_PADDING;
     public static int CARDSLOT_WIDTH;
     public static int CARDSLOT_HEIGHT;
     public static int CARDSLOT_PADDING;
     public static int TOPBAR_HEIGHT;
 
+    private static int ICON_SIZE;
 
-    private static final int PLAYER_DEFAULT_HEALTH = 1;
+
+    private static final int PLAYER_DEFAULT_HEALTH = 10;
     private static final int PLAYER_DEFAULT_POWER = 6;
 
     private static final int MONSTER_MAX_POWER = 15;
@@ -72,11 +79,10 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         int SCREEN_WIDTH = ScreenManager.SCREEN_WIDTH;
         int SCREEN_HEIGHT = ScreenManager.SCREEN_HEIGHT;
 
-        double CARDSLOT_PADDING_RATIO = 0.025;
+
         CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
         CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
 
-        double TOPBAR_RATIO = 0.1;
         TOPBAR_HEIGHT = (int) (SCREEN_HEIGHT * TOPBAR_RATIO);
 
         double CARDSLOT_WIDTH_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
@@ -86,6 +92,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
         double CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING2_RATIO) - TOPBAR_RATIO) / GAME_SIZE;
         CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
+
+        ICON_SIZE = (int) (SCREEN_WIDTH * ICON_RATIO);
 
 
         camera = new OrthographicCamera();
@@ -100,6 +108,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
         Label lblGoldText = getUiFactory().createLabel("GOLD: ", getUiFactory().getTopbarFont());
         topBar.add(lblGoldText);
+
 
         lblGold = getUiFactory().createLabel("0", getUiFactory().getTopbarFont());
         topBar.add(lblGold).expand().align(Align.left);
@@ -147,14 +156,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private void drawScene() {
-//        Group group = new Group();
-//        group.setSize(ScreenManager.SCREEN_WIDTH, TOPBAR_HEIGHT);
-////        group.setPosition(0, ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
-//        group.setPosition(50,50);
-//        group.setColor(new Color(1,1,1,0));
-//        addActor(group);
-
-
         Group screen = new Group();
         for (CardSlot[] slots : cardSlots) {
             for (final CardSlot slot : slots) {
@@ -167,45 +168,60 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 slot.getImgCard().setFillParent(true);
 
                 Table table = new Table();
+                slot.setTable(table);
                 table.setFillParent(true);
-                table.left().bottom().padLeft(10).padBottom(10);
-                slot.addActor(table);
+                table.pad(10);
 
                 switch (slot.getCard().getCardType()) {
                     case PLAYER:
-                        ((PlayerCardSlot) slot).setLblGold(getUiFactory().createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getGold())));
-                        table.add(getUiFactory().createCardDescLabel("Gold: ")).left();
-                        table.add(((PlayerCardSlot) slot).getLblGold());
-                        table.row();
-                        ((PlayerCardSlot) slot).setLblHealth(getUiFactory().createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())));
-                        table.add(getUiFactory().createCardDescLabel("Health: ")).left();
-                        table.add(((PlayerCardSlot) slot).getLblHealth());
-                        table.row();
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
+                        table.bottom().right();
+                        ((PlayerCardSlot) slot).setIlblHealth(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(((PlayerCard) slot.getCard()).getHealth())),
+                                getUiFactory().drawImage(getAssetsManager().getHeart()), ICON_SIZE, ICON_SIZE));
+                        table.add(((PlayerCardSlot) slot).getIlblHealth()).expandX().align(Align.left);
+
+                        table.bottom().left();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())),
+                                getUiFactory().drawImage(getAssetsManager().getPower()), ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
                         break;
 
                     case GOLD:
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Amount: "));
+
+                        table.top().right();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())),
+                                getUiFactory().drawImage(getAssetsManager().getGold()), ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
                         break;
 
                     case WEAPON:
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
+                        table.top().right();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())),
+                                getUiFactory().drawImage(getAssetsManager().getPower()), ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
                         break;
 
                     case MONSTER:
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
+                        table.bottom().right();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())),
+                                getUiFactory().drawImage(getAssetsManager().getPower()), ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
                         break;
 
                     case HEALTH_POTION:
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel("Power: "));
+                        table.top().right();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())),
+                                getUiFactory().drawImage(getAssetsManager().getHeart()), ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
                         break;
 
                     case CHEST:
-                        slot.setLblPowerName(getUiFactory().createCardDescLabel(""));
+                        table.top().right();
+                        slot.setIlblPower(new ImageLabel(getUiFactory().createCardDescLabel(""),
+                                null, ICON_SIZE, ICON_SIZE));
+                        table.add(slot.getIlblPower());
+
                 }
-                slot.setLblPower(getUiFactory().createCardDescLabel(String.valueOf(slot.getCard().getPower())));
-                table.add(slot.getLblPowerName()).left();
-                table.add(slot.getLblPower());
+                slot.addActor(table);
 
                 slot.addListener(new InputListener() {
                     @Override
@@ -215,19 +231,16 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                 if (slot.isClickable(playerPositionX, playerPositionY)) {
                                     System.out.println("Move to: X: " + slot.getSlotPositionX() + " Y: " + slot.getSlotPositionY() + " " + slot.getCard());
                                     if (slot.getCard().use(getPlayerCard())) {
-                                        slot.redraw();
-                                        cardSlots[playerPositionX][playerPositionY].redraw();
+                                        slot.redraw(getUiFactory(), getAssetsManager());
+                                        cardSlots[playerPositionX][playerPositionY].redraw(getUiFactory(), getAssetsManager());
                                         moveToSequence(slot.getSlotPositionX(), slot.getSlotPositionY());
-                                        if (slot.getCard().getCardType() == CardType.GOLD) {
-                                            lblGold.setText(String.valueOf(getPlayerCard().getGold()));
-                                        }
                                     } else {
                                         if (slot.getCard().getCardType() == CardType.CHEST) {
                                             changeCardSequence(slot, randomCard(CardType.MONSTER, CardType.CHEST));
                                         }
                                         if (slot.getCard().getCardType() == CardType.MONSTER) {
-                                            getPlayerCardSlot().redraw();
-                                            slot.redraw();
+                                            getPlayerCardSlot().redraw(getUiFactory(), getAssetsManager());
+                                            slot.redraw(getUiFactory(), getAssetsManager());
                                             if (slot.getCard().getPower() == 0) {
                                                 GoldCard newCard = new GoldCard();
                                                 newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
@@ -252,63 +265,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                 screen.addActor(slot);
             }
         }
+        getPlayerCardSlot().setLblGold(lblGold);
         addActor(screen);
     }
-
-//    @Override
-//    public void render(float delta) {
-//        super.render(delta);
-//        if (getPlayerCard().isAlive()) {
-//            batch.setProjectionMatrix(camera.combined);
-//            batch.begin();
-//            for (CardSlot[] slots : cardSlots) {
-//                for (CardSlot slot : slots) {
-//                    batch.draw(slot.getBackgroundTexture(), slot.x, slot.y, slot.width, slot.height);
-//                    batch.draw(slot.getCard().getCardTexture(), slot.x, slot.y, slot.width, slot.height);
-//
-//                    switch (slot.getCard().getCardType()) {
-//                        case PLAYER:
-//                            font.draw(batch, "Gold: " + String.valueOf(((PlayerCard) slot.getCard()).getGold()), slot.x + CARD_PADDING, slot.y + 6 * CARD_PADDING);
-//                            font.draw(batch, "Health: " + String.valueOf(((PlayerCard) slot.getCard()).getHealth()), slot.x + CARD_PADDING, slot.y + 4 * CARD_PADDING);
-//                            font.draw(batch, "Power: " + String.valueOf(slot.getCard().getPower()), slot.x + CARD_PADDING, slot.y + 2 * CARD_PADDING);
-//                            break;
-//
-//                        case GOLD:
-//                            font.draw(batch, "Amount: " + String.valueOf(slot.getCard().getPower()), slot.x + CARD_PADDING, slot.y + 2 * CARD_PADDING);
-//                            break;
-//
-//                        case WEAPON:
-//                            font.draw(batch, "Power: " + String.valueOf(slot.getCard().getPower()), slot.x + CARD_PADDING, slot.y + 2 * CARD_PADDING);
-//                            break;
-//
-//                        case MONSTER:
-//                            font.draw(batch, "Power: " + String.valueOf(slot.getCard().getPower()), slot.x + CARD_PADDING, slot.y + 2 * CARD_PADDING);
-//                            break;
-//                    }
-//                }
-//            }
-//            batch.end();
-//
-//            if (Gdx.input.isTouched()) {
-//                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-//                camera.unproject(touch);
-//                if (getPlayerCard().isAlive()) {
-//                    for (int i = 0; i < 3; i++) {
-//                        for (int ii = 0; ii < 3; ii++) {
-//                            if (cardSlots[i][ii].contains(touch.x, touch.y) && slotIsClickable(i, ii)) {
-//                                System.out.println("Move to: X: " + i + " Y: " + ii + " " + cardSlots[i][ii].getCard());
-//                                if (cardSlots[i][ii].getCard().use(getPlayerCard())) {
-//                                    if (getPlayerCard().isAlive()) {
-//                                        moveTo(i, ii);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private void changeCardSequence(final CardSlot slot, final Card newCard) {
         isAnimating = true;
@@ -319,7 +278,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
             @Override
             public void run() {
                 slot.setCard(newCard);
-                slot.redraw();
+                slot.redraw(getUiFactory(), getAssetsManager());
                 slot.animate(CardSlot.Animation.CREATE);
                 Timer.schedule(new Timer.Task() {
                     @Override
@@ -388,7 +347,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
                         cardSlots[x][y].setPosition(oppositeSlot.getX(), oppositeSlot.getY());
                         cardSlots[x][y].setCard(randomCard());
-                        cardSlots[x][y].redraw();
+                        cardSlots[x][y].redraw(getUiFactory(), getAssetsManager());
 
 
                         oppositeSlot.animate(CardSlot.Animation.MOVE, oppositeDirection);

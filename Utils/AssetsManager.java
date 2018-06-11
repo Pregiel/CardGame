@@ -15,6 +15,10 @@ public class AssetsManager extends AssetManager {
     private static final String BACKGROUNDTEXTURE = "cardBackground.jpg";
     private static final String BACKGROUND = "img/background.png";
     private static final String SEPARATOR = "img/separator.png";
+    private static final String HEART = "img/heart.png";
+    private static final String POWER = "img/sword.png";
+    private static final String GOLD = "img/bag.png";
+
     private static final String DEFAULTCARD = "defaultCard.png";
     private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png",
                 "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
@@ -30,6 +34,9 @@ public class AssetsManager extends AssetManager {
         load(BACKGROUNDTEXTURE, Texture.class);
         load(BACKGROUND, Texture.class);
         load(SEPARATOR, Texture.class);
+        load(HEART, Texture.class);
+        load(POWER, Texture.class);
+        load(GOLD, Texture.class);
         load(DEFAULTCARD, Texture.class);
         for (String s : PLAYERCARD) {
             load(s, Texture.class);
@@ -99,6 +106,13 @@ public class AssetsManager extends AssetManager {
     public Texture getSeparator() {
         return get(SEPARATOR, Texture.class);
     }
+
+    public Texture getHeart() {return get(HEART, Texture.class);}
+
+    public Texture getPower() {return get(POWER, Texture.class);}
+
+    public Texture getGold() {return get(GOLD, Texture.class);}
+
 
 
 
