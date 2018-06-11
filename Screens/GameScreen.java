@@ -47,8 +47,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private static int ICON_SIZE;
 
 
-    private static final int PLAYER_DEFAULT_HEALTH = 10;
-    private static final int PLAYER_DEFAULT_POWER = 6;
+    private static final int PLAYER_DEFAULT_HEALTH = 1;//10;
+    private static final int PLAYER_DEFAULT_POWER = 0;//6;
 
     private static final int MONSTER_MAX_POWER = 15;
     private static final int GOLD_MAX_POWER = 10;
@@ -241,6 +241,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                         if (slot.getCard().getCardType() == CardType.MONSTER) {
                                             getPlayerCardSlot().redraw(getUiFactory(), getAssetsManager());
                                             slot.redraw(getUiFactory(), getAssetsManager());
+                                            if (getPlayerCard().getHealth() <= 0) {
+                                                ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME);
+                                            }
                                             if (slot.getCard().getPower() == 0) {
                                                 GoldCard newCard = new GoldCard();
                                                 newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());

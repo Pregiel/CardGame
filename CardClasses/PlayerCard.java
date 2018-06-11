@@ -34,9 +34,6 @@ public class PlayerCard extends Card {
 
     public void addHealth(int value) {
         health = health + value;
-        if (health <= 0) {
-            ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME);
-        }
     }
 
     public boolean isAlive() {
