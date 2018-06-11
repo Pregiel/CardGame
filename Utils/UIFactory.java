@@ -26,16 +26,18 @@ public class UIFactory {
     private static final int CARDTEXT_SIZE = 36;
     private static final int BUTTONTEXT_SIZE = 130;
     private static final int LARGETEXT_SIZE = 120;
+    private static final int TOPBATTEXT_SIZE = 56;
 
     private static FreeTypeFontGenerator generator;
 
     private Skin skin;
-    private BitmapFont cardDescFont, buttonFont, largeFont;
+    private BitmapFont cardDescFont, buttonFont, largeFont, topbarFont;
 
     public UIFactory() {
         cardDescFont = generateFont(CARDTEXT_SIZE);
         buttonFont = generateFont(BUTTONTEXT_SIZE);
         largeFont = generateFont(LARGETEXT_SIZE);
+        topbarFont = generateFont(TOPBATTEXT_SIZE);
         skin = new Skin(Gdx.files.internal(SKIN_PATH));
     }
 
@@ -51,10 +53,15 @@ public class UIFactory {
         return largeFont;
     }
 
+    public BitmapFont getTopbarFont() {
+        return topbarFont;
+    }
+
     public void dispose() {
         cardDescFont.dispose();
         buttonFont.dispose();
         largeFont.dispose();
+        topbarFont.dispose();
         skin.dispose();
     }
 
@@ -132,4 +139,5 @@ public class UIFactory {
 
         return image;
     }
+
 }

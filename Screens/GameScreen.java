@@ -1,16 +1,14 @@
 package com.pregiel.cardgame.Screens;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.pregiel.cardgame.CardClasses.Card;
@@ -24,9 +22,8 @@ import com.pregiel.cardgame.CardSlot;
 import com.pregiel.cardgame.CardType;
 import com.pregiel.cardgame.Direction;
 import com.pregiel.cardgame.PlayerCardSlot;
-import com.pregiel.cardgame.Utils.AssetsManager;
+import com.pregiel.cardgame.Utils.ScreenEnum;
 import com.pregiel.cardgame.Utils.ScreenManager;
-import com.pregiel.cardgame.Utils.UIFactory;
 import com.pregiel.cardgame.Utils.Vector2;
 
 
@@ -35,10 +32,6 @@ import com.pregiel.cardgame.Utils.Vector2;
  */
 
 public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
-    private static double CARDSLOT_WIDTH_RATIO;
-    private static double CARDSLOT_HEIGHT_RATIO;
-    private static double CARDSLOT_PADDING_RATIO;
-    private static double TOPBAR_RATIO;
 
     public static int CARD_PADDING;
     public static int CARDSLOT_WIDTH;
@@ -47,7 +40,7 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     public static int TOPBAR_HEIGHT;
 
 
-    private static final int PLAYER_DEFAULT_HEALTH = 10;
+    private static final int PLAYER_DEFAULT_HEALTH = 1;
     private static final int PLAYER_DEFAULT_POWER = 6;
 
     private static final int MONSTER_MAX_POWER = 15;
@@ -65,6 +58,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     private OrthographicCamera camera;
     private CardSlot[][] cardSlots;
 
+    private TextButton btnMenu;
+    private Label lblGold;
 
 
     public GameScreen() {
@@ -77,22 +72,49 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         int SCREEN_WIDTH = ScreenManager.SCREEN_WIDTH;
         int SCREEN_HEIGHT = ScreenManager.SCREEN_HEIGHT;
 
-        CARDSLOT_PADDING_RATIO = 0.025;
-        TOPBAR_RATIO = 0.1;
-        CARDSLOT_WIDTH_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
-        CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO) - TOPBAR_RATIO) / GAME_SIZE;
-
-
-        CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
-        CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
+        double CARDSLOT_PADDING_RATIO = 0.025;
         CARDSLOT_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);  //8
+        CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
+
+        double TOPBAR_RATIO = 0.1;
         TOPBAR_HEIGHT = (int) (SCREEN_HEIGHT * TOPBAR_RATIO);
 
+        double CARDSLOT_WIDTH_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING_RATIO)) / GAME_SIZE;
+        CARDSLOT_WIDTH = (int) (SCREEN_WIDTH * CARDSLOT_WIDTH_RATIO);  //140
 
-        CARD_PADDING = (int) (SCREEN_WIDTH * CARDSLOT_PADDING_RATIO);
+        double CARDSLOT_PADDING2_RATIO = (double) CARDSLOT_PADDING / SCREEN_HEIGHT;
+
+        double CARDSLOT_HEIGHT_RATIO = (1 - ((GAME_SIZE + 1) * CARDSLOT_PADDING2_RATIO) - TOPBAR_RATIO) / GAME_SIZE;
+        CARDSLOT_HEIGHT = (int) (SCREEN_HEIGHT * CARDSLOT_HEIGHT_RATIO);  //250
+
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+
+        Table topBar = new Table();
+        topBar.setWidth(ScreenManager.SCREEN_WIDTH - 2 * CARDSLOT_PADDING);
+        topBar.setHeight(TOPBAR_HEIGHT);
+        topBar.setPosition(CARDSLOT_PADDING, ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
+
+
+        Label lblGoldText = getUiFactory().createLabel("GOLD: ", getUiFactory().getTopbarFont());
+        topBar.add(lblGoldText);
+
+        lblGold = getUiFactory().createLabel("0", getUiFactory().getTopbarFont());
+        topBar.add(lblGold).expand().align(Align.left);
+
+        btnMenu = getUiFactory().createButton("Menu", getUiFactory().getTopbarFont());
+        btnMenu.addListener(getUiFactory().createListener(ScreenEnum.MAIN_MENU));
+        topBar.add(btnMenu);
+
+        addActor(topBar);
+
+
+        Image separator = getUiFactory().drawImage(getAssetsManager().getSeparator());
+        separator.setWidth(ScreenManager.SCREEN_WIDTH);
+        separator.setY(ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
+        addActor(separator);
 
 
         cardSlots = new CardSlot[GAME_SIZE][GAME_SIZE];
@@ -132,18 +154,6 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 //        group.setColor(new Color(1,1,1,0));
 //        addActor(group);
 
-
-
-        Table topBar = new Table();
-        topBar.setWidth(ScreenManager.SCREEN_WIDTH);
-        topBar.setHeight(TOPBAR_HEIGHT);
-        topBar.setPosition(0, ScreenManager.SCREEN_HEIGHT - TOPBAR_HEIGHT);
-
-        Label lblGold = getUiFactory().createLabel("tak", 22);
-
-        topBar.add(lblGold);
-
-        addActor(topBar);
 
         Group screen = new Group();
         for (CardSlot[] slots : cardSlots) {
@@ -208,6 +218,9 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                         slot.redraw();
                                         cardSlots[playerPositionX][playerPositionY].redraw();
                                         moveToSequence(slot.getSlotPositionX(), slot.getSlotPositionY());
+                                        if (slot.getCard().getCardType() == CardType.GOLD) {
+                                            lblGold.setText(String.valueOf(getPlayerCard().getGold()));
+                                        }
                                     } else {
                                         if (slot.getCard().getCardType() == CardType.CHEST) {
                                             changeCardSequence(slot, randomCard(CardType.MONSTER, CardType.CHEST));

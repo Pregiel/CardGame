@@ -14,6 +14,7 @@ public class AssetsManager extends AssetManager {
 
     private static final String BACKGROUNDTEXTURE = "cardBackground.jpg";
     private static final String BACKGROUND = "img/background.png";
+    private static final String SEPARATOR = "img/separator.png";
     private static final String DEFAULTCARD = "defaultCard.png";
     private static final String[] PLAYERCARD = {"cards/player1.png", "cards/player2.png",
                 "cards/player3.png", "cards/player4.png", "cards/player5.png", "cards/player6.png"};
@@ -28,6 +29,7 @@ public class AssetsManager extends AssetManager {
         super();
         load(BACKGROUNDTEXTURE, Texture.class);
         load(BACKGROUND, Texture.class);
+        load(SEPARATOR, Texture.class);
         load(DEFAULTCARD, Texture.class);
         for (String s : PLAYERCARD) {
             load(s, Texture.class);
@@ -93,5 +95,11 @@ public class AssetsManager extends AssetManager {
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         return texture;
     }
+
+    public Texture getSeparator() {
+        return get(SEPARATOR, Texture.class);
+    }
+
+
 
 }

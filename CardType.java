@@ -1,7 +1,5 @@
 package com.pregiel.cardgame;
 
-import com.pregiel.cardgame.CardClasses.Card;
-
 import java.util.Random;
 
 /**

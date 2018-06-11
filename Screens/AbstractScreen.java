@@ -18,7 +18,7 @@ import com.pregiel.cardgame.Utils.UIFactory;
 
 public abstract class AbstractScreen extends Stage implements Screen {
 
-    protected AbstractScreen() {
+    AbstractScreen() {
         super(new StretchViewport(ScreenManager.SCREEN_WIDTH, ScreenManager.SCREEN_HEIGHT, new OrthographicCamera()));
 
         uiFactory = new UIFactory();
@@ -29,11 +29,11 @@ public abstract class AbstractScreen extends Stage implements Screen {
     private UIFactory uiFactory;
     private AssetsManager assetsManager;
 
-    public UIFactory getUiFactory() {
+    UIFactory getUiFactory() {
         return uiFactory;
     }
 
-    public AssetsManager getAssetsManager() {
+    AssetsManager getAssetsManager() {
         return assetsManager;
     }
 
@@ -77,5 +77,7 @@ public abstract class AbstractScreen extends Stage implements Screen {
     public void dispose() {
         super.dispose();
         background.remove();
+        uiFactory.dispose();
+        assetsManager.dispose();
     }
 }

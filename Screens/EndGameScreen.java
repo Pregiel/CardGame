@@ -3,8 +3,6 @@ package com.pregiel.cardgame.Screens;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
-import com.pregiel.cardgame.Utils.AssetsManager;
-import com.pregiel.cardgame.Utils.UIFactory;
 
 /**
  * Created by Pregiel on 27.05.2018.
