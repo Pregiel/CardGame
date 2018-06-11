@@ -242,16 +242,18 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                             getPlayerCardSlot().redraw(getUiFactory(), getAssetsManager());
                                             slot.redraw(getUiFactory(), getAssetsManager());
                                             if (getPlayerCard().getHealth() <= 0) {
-                                                ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME);
-                                            }
-                                            if (slot.getCard().getPower() == 0) {
-                                                GoldCard newCard = new GoldCard();
-                                                newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
-                                                newCard.setCardTexture(getAssetsManager());
-                                                changeCardSequence(slot, newCard);
+//                                                MainMenuScreen.setHighScore(getPlayerCard().getGold());
+                                                ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME, getPlayerCard().getGold());
                                             } else {
-                                                damageCardSequence(getPlayerCardSlot());
-                                                damageCardSequence(slot);
+                                                if (slot.getCard().getPower() == 0) {
+                                                    GoldCard newCard = new GoldCard();
+                                                    newCard.setPower(((MonsterCard) slot.getCard()).getMaxPower());
+                                                    newCard.setCardTexture(getAssetsManager());
+                                                    changeCardSequence(slot, newCard);
+                                                } else {
+                                                    damageCardSequence(getPlayerCardSlot());
+                                                    damageCardSequence(slot);
+                                                }
                                             }
                                         }
                                     }

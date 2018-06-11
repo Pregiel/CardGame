@@ -11,44 +11,65 @@ import com.pregiel.cardgame.Utils.ScreenEnum;
  */
 
 public class EndGameScreen extends AbstractScreen {
-    private Label label;
+    private Label lblScore, lblScoreText, lblHishscore, lblHishscoreText;
     private TextButton btnPlay, btnMenu;
     private Table table;
+    private int score;
 
-    public EndGameScreen() {
+    public EndGameScreen(int score) {
         super();
+        this.score = score;
     }
 
     @Override
     public void buildStage() {
         super.buildStage();
-        label = getUiFactory().createLabel("YOU DIED", getUiFactory().getLargeFont());
-        label.setPosition(getWidth() / 2, 1000, Align.center);
-        addActor(label);
-
         table = new Table();
         table.setPosition(getWidth() / 2, getHeight() / 2);
 
+        if (score > MainMenuScreen.getHighScore()) {
+            lblScoreText = getUiFactory().createLabel("NEW HIGH SCORE:", getUiFactory().getMediumFont());
+            lblHishscoreText = getUiFactory().createLabel("LAST HIGH SCORE: ", getUiFactory().getMediumFont());
+        } else {
+            lblScoreText = getUiFactory().createLabel("SCORE:", getUiFactory().getMediumFont());
+            lblHishscoreText = getUiFactory().createLabel("HIGH SCORE: ", getUiFactory().getEndHscoreFont());
+        }
+        lblScore = getUiFactory().createLabel(String.valueOf(score), getUiFactory().getLargeFont());
+        table.add(lblScoreText).colspan(2);
+        table.row();
+        table.add(lblScore).colspan(2);
+
+        table.row().space(20);
+        lblHishscore = getUiFactory().createLabel(String.valueOf(MainMenuScreen.getHighScore()), getUiFactory().getEndHscoreFont());
+
+        table.add(lblHishscoreText);
+        table.add(lblHishscore);
+
+        table.row().space(50);
         btnPlay = getUiFactory().createButton("PLAY", getUiFactory().getButtonFont());
-//        btnPlay.setPosition(getWidth() / 2, getHeight() / 2, Align.center);
-        table.add(btnPlay);
+        table.add(btnPlay).colspan(2);
         table.row().space(30);
 
         btnMenu = getUiFactory().createButton("MENU", getUiFactory().getButtonFont());
-//        btnMenu.setPosition(getWidth() / 2, getHeight() / 2, Align.center);
-        table.add(btnMenu);
+        table.add(btnMenu).colspan(2);
 
         addActor(table);
 
         btnPlay.addListener(getUiFactory().createListener(com.pregiel.cardgame.Utils.ScreenEnum.GAME));
         btnMenu.addListener(getUiFactory().createListener(ScreenEnum.MAIN_MENU));
+
+        MainMenuScreen.setHighScore(score);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        label.remove();
         btnPlay.remove();
+        btnMenu.remove();
         table.remove();
+        lblHishscore.remove();
+        lblHishscoreText.remove();
+        lblScore.remove();
+        lblScoreText.remove();
     }
 }

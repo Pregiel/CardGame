@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pregiel.cardgame.CardType;
 import com.pregiel.cardgame.Utils.AssetsManager;
-import com.pregiel.cardgame.Utils.ScreenManager;
 import com.pregiel.cardgame.Utils.UIFactory;
 
 /**
@@ -20,9 +19,19 @@ import com.pregiel.cardgame.Utils.UIFactory;
 
 public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
-    private Label label;
+    private Label lblName, lblHighScore, lblHighScoreText;
     private TextButton btnPlay, btnNextCharacter, btnPrevCharacter;
     private Image imgCharacter;
+
+    private static int highScore = 0;
+
+    public static void setHighScore(int highScore) {
+        MainMenuScreen.highScore = highScore;
+    }
+
+    public static int getHighScore() {
+        return highScore;
+    }
 
     public MainMenuScreen() {
         super();
@@ -31,9 +40,9 @@ public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen 
     @Override
     public void buildStage() {
         super.buildStage();
-        label = getUiFactory().createLabel("CARD GAME", getUiFactory().getLargeFont());
-        label.setPosition(getWidth() / 2, 1000, Align.center);
-        addActor(label);
+        lblName = getUiFactory().createLabel("CARD GAME", getUiFactory().getLargeFont());
+        lblName.setPosition(getWidth() / 2, 1000, Align.center);
+        addActor(lblName);
 
         Table table = new Table();
 
@@ -64,7 +73,13 @@ public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen 
 
         table.row();
 
+        lblHighScoreText = getUiFactory().createLabel("HIGH SCORE: ", getUiFactory().getEndHscoreFont());
+        lblHighScore = getUiFactory().createLabel(String.valueOf(highScore), getUiFactory().getEndHscoreFont());
+        table.add(lblHighScoreText).colspan(2);
+        table.add(lblHighScore);
 
+
+        table.row().space(15);
         btnPlay = getUiFactory().createButton("PLAY", getUiFactory().getButtonFont());
         table.setPosition(getWidth() / 2, getHeight() / 2, Align.center);
         table.add(btnPlay).colspan(3).fillX();
@@ -76,7 +91,9 @@ public class MainMenuScreen extends com.pregiel.cardgame.Screens.AbstractScreen 
     @Override
     public void dispose() {
         super.dispose();
-        label.remove();
+        lblName.remove();
+        lblHighScoreText.remove();
+        lblHighScore.remove();
         btnPlay.remove();
         btnPrevCharacter.remove();
         btnNextCharacter.remove();
