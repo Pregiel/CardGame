@@ -51,11 +51,11 @@ public class ImageLabel extends Group {
 
     @Override
     public boolean remove() {
-        boolean b = super.remove();
+        super.remove();
         label.remove();
         if (image != null) {
             image.remove();
         }
-        return b;
+        return true;
     }
 }

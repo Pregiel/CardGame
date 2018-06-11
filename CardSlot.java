@@ -265,4 +265,14 @@ public class CardSlot extends Group {
     public enum Animation {
         DESTROY, CREATE, MOVE, DAMAGE, UNDAMAGE
     }
+
+    @Override
+    public boolean remove() {
+        super.remove();
+        imgCard.remove();
+        table.remove();
+        ilblPower.remove();
+
+        return true;
+    }
 }

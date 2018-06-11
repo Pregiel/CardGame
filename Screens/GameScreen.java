@@ -519,5 +519,13 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         super.dispose();
 
 
+        for (CardSlot[] cardSlot : cardSlots) {
+            for (CardSlot slot : cardSlot) {
+                slot.remove();
+            }
+        }
+
+        btnMenu.remove();
+        lblGold.remove();
     }
 }
