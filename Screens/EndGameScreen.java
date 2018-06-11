@@ -29,7 +29,7 @@ public class EndGameScreen extends AbstractScreen {
 
         if (score > MainMenuScreen.getHighScore()) {
             lblScoreText = getUiFactory().createLabel("NEW HIGH SCORE:", getUiFactory().getMediumFont());
-            lblHishscoreText = getUiFactory().createLabel("LAST HIGH SCORE: ", getUiFactory().getMediumFont());
+            lblHishscoreText = getUiFactory().createLabel("LAST HIGH SCORE: ", getUiFactory().getEndHscoreFont());
         } else {
             lblScoreText = getUiFactory().createLabel("SCORE:", getUiFactory().getMediumFont());
             lblHishscoreText = getUiFactory().createLabel("HIGH SCORE: ", getUiFactory().getEndHscoreFont());
@@ -42,8 +42,8 @@ public class EndGameScreen extends AbstractScreen {
         table.row().space(20);
         lblHishscore = getUiFactory().createLabel(String.valueOf(MainMenuScreen.getHighScore()), getUiFactory().getEndHscoreFont());
 
-        table.add(lblHishscoreText);
-        table.add(lblHishscore);
+        table.add(lblHishscoreText).align(Align.right);
+        table.add(lblHishscore).align(Align.left);
 
         table.row().space(50);
         btnPlay = getUiFactory().createButton("PLAY", getUiFactory().getButtonFont());

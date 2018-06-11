@@ -242,8 +242,8 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
                                             getPlayerCardSlot().redraw(getUiFactory(), getAssetsManager());
                                             slot.redraw(getUiFactory(), getAssetsManager());
                                             if (getPlayerCard().getHealth() <= 0) {
-//                                                MainMenuScreen.setHighScore(getPlayerCard().getGold());
-                                                ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME, getPlayerCard().getGold());
+
+                                                destroyAllCardsSequence();
                                             } else {
                                                 if (slot.getCard().getPower() == 0) {
                                                     GoldCard newCard = new GoldCard();
@@ -272,6 +272,34 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
         }
         getPlayerCardSlot().setLblGold(lblGold);
         addActor(screen);
+    }
+
+    private void destroyAllCardsSequence() {
+        isAnimating = true;
+
+        getPlayerCardSlot().animate(CardSlot.Animation.DESTROY);
+
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                for (CardSlot[] cardSlot : cardSlots) {
+                    for (CardSlot slot : cardSlot) {
+                        slot.animate(CardSlot.Animation.DESTROY);
+                    }
+                }
+
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        isAnimating = true;
+                        ScreenManager.getInstance().showScreen(ScreenEnum.END_GAME, getPlayerCard().getGold());
+                    }
+                }, CardSlot.ANIMATION_DESTROY_DURATION);
+            }
+        }, CardSlot.ANIMATION_DESTROY_DURATION);
+
+
     }
 
     private void changeCardSequence(final CardSlot slot, final Card newCard) {
