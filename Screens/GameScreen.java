@@ -459,7 +459,12 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
     }
 
     private Card randomCard(CardType... excludeCardTypes) {
-        CardType type = CardType.getRandomCardType(excludeCardTypes);
+        CardType type;
+
+        do {
+            type = CardType.getRandomCardType(excludeCardTypes);
+        } while (getCardAmount(type) >= 3);
+
         Card card;
         switch (type) {
 //            case GOLD:
@@ -488,6 +493,22 @@ public class GameScreen extends com.pregiel.cardgame.Screens.AbstractScreen {
 
         card.setCardTexture(getAssetsManager());
         return card;
+    }
+
+    private int getCardAmount(CardType cardType) {
+
+        int cardTypeInstance = 0;
+
+        for (CardSlot[] cardSlot : cardSlots) {
+            for (CardSlot slot : cardSlot) {
+                if (slot.getCard() != null) {
+                    if (slot.getCard().getCardType() == cardType) {
+                        cardTypeInstance = cardTypeInstance + 1;
+                    }
+                }
+            }
+        }
+        return cardTypeInstance;
     }
 
     @Override

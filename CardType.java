@@ -11,17 +11,45 @@ public enum CardType {
 
     private static final int size = values().length - 1;
 
+
+
     public static CardType getRandomCardType(CardType... excludeCardTypes) {
         Random r = new Random();
-        int value = r.nextInt(size-1) + 1;
+        int value = r.nextInt(size - 1) + 1;
         CardType randomCardType = getCardType(value);
-        for (CardType type: excludeCardTypes) {
+        for (CardType type : excludeCardTypes) {
             if (type == randomCardType) {
                 randomCardType = getRandomCardType(excludeCardTypes);
                 break;
             }
         }
         return randomCardType;
+    }
+
+
+    public int getCardTypeNumber() {
+        switch (this) {
+            case PLAYER:
+                return 0;
+
+            case MONSTER:
+                return 1;
+
+            case GOLD:
+                return 2;
+
+            case WEAPON:
+                return 3;
+
+            case HEALTH_POTION:
+                return 4;
+
+            case CHEST:
+                return 5;
+
+            default:
+                return -1;
+        }
     }
 
     public static CardType getCardType(int value) {
